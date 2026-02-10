@@ -13,6 +13,15 @@
 
 package frc.robot;
 
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.RobotBase;
 
 /**
@@ -37,6 +46,8 @@ public final class Constants {
 
   public static final class CanIDs {
     // can IDs
+
+    // Drive
     public static final int kFLDrivingCAN = 1;
     public static final int kFRDrivingCAN = 2;
     public static final int kBLDrivingCAN = 3;
@@ -47,14 +58,74 @@ public final class Constants {
     public static final int kBLTurningCAN = 7;
     public static final int kBRTurningCAN = 8;
     public static final int kGyroID = 9;
+
+    // Intake
+    public static final int kIntakeMotor = 10;
+    public static final int kIndexMotor = 11;
+
+    // Turret
+    public static final int kTurretPivot = 12;
+
+    // Shooter
+    public static final int kShooterMotor = 13;
+
+    // Hopper
+    public static final int kHopperMoter = 14;
+
+    // Climber 
+    // TODO: figure out new climber design
+    public static final int kLiftMotor = 15;
+    public static final int kPiviotMotor = 16;
   }
 
-  public static final class MotorSpeeds {}
+  public static final class MotorSpeeds {
+
+    // Turret gains
+    public static final double kTurretP = 0.0;
+    public static final double kTurretI = 0.0;
+    public static final double kTurretD = 0.0;
+    // https://docs.revrobotics.com/revlib/spark/closed-loop/feed-forward-control
+    public static final double kTurretS = 0.0; // Static
+    public static final double kTurretV = 0.0; // Velocity
+    public static final double kTurretA = 0.0; // Acceleration
+
+    public static final double kTurretCruise = 0.0; // Cruise velocity
+    public static final double kTurretAccel = 0.0; // Max acceleration
+    public static final double kTurretError = 0.0; // Allowed profile error
+
+    public static final double kTurretSpeed = .25;
+
+  }
 
   public static final class OIConstants {
     // controller ports
     public static final int kDriverControllerPort = 0;
     public static final int kOperatorControllerPort = 1;
     public static final double kDriveDeadband = 0.2;
+  }
+
+  public static final class VisionConstants {
+    public static final AprilTagFieldLayout kTagLayout =
+        AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltAndymark);
+
+    public static final Transform3d kFrontRobotToCam =
+        new Transform3d(
+            new Translation3d(0, 0.0, 0),
+            new Rotation3d(0, 0, 0)); // TODO: get real numbers from CAD
+
+    // The standard deviations of our vision estimated poses, which affect correction rate
+    // (Fake values. Experiment and determine estimation noise on an actual robot.)
+    public static final Matrix<N3, N1> kFrontSingleTagStdDevs = VecBuilder.fill(4, 4, 8);
+    public static final Matrix<N3, N1> kFrontMultiTagStdDevs = VecBuilder.fill(0.5, 0.5, 1);
+
+    public static final Transform3d kSideRobotToCam =
+        new Transform3d(
+            new Translation3d(0, 0.0, 0),
+            new Rotation3d(0, 0, 0)); // TODO: get real numbers from CAD
+
+    // The standard deviations of our vision estimated poses, which affect correction rate
+    // (Fake values. Experiment and determine estimation noise on an actual robot.)
+    public static final Matrix<N3, N1> kSideSingleTagStdDevs = VecBuilder.fill(4, 4, 8);
+    public static final Matrix<N3, N1> kSideMultiTagStdDevs = VecBuilder.fill(0.5, 0.5, 1);
   }
 }

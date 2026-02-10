@@ -19,6 +19,9 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.OIConstants;
 import frc.robot.commands.DriveCommands;
+import frc.robot.subsystems.Hopper;
+import frc.robot.subsystems.Turret;
+import frc.robot.subsystems.Vision;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -36,6 +39,9 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 public class RobotContainer {
   // Subsystems
   private final Drive m_drive;
+  private final Vision m_vision;
+  private final Turret m_turret;
+  private final Hopper m_hopper;
 
   // Controller
   private final CommandXboxController m_driverController =
@@ -56,6 +62,9 @@ public class RobotContainer {
                 new ModuleIOSpark(1),
                 new ModuleIOSpark(2),
                 new ModuleIOSpark(3));
+        m_vision = new Vision(m_drive::addVisionMeasurement);
+        m_turret = new Turret();
+        m_hopper = new Hopper();
         break;
 
       case SIM:
@@ -67,6 +76,9 @@ public class RobotContainer {
                 new ModuleIOSim(),
                 new ModuleIOSim(),
                 new ModuleIOSim());
+        m_vision = new Vision(m_drive::addVisionMeasurement);
+        m_turret = new Turret();
+        m_hopper = new Hopper();
         break;
 
       default:
@@ -78,6 +90,9 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {},
                 new ModuleIO() {});
+        m_vision = new Vision(m_drive::addVisionMeasurement);
+        m_turret = new Turret();
+        m_hopper = new Hopper();
         break;
     }
 
