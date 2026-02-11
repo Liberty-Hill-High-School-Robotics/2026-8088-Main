@@ -19,7 +19,10 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.OIConstants;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.Hopper.*;
+import frc.robot.commands.Intake.*;
 import frc.robot.subsystems.Hopper;
+import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.Vision;
 import frc.robot.subsystems.drive.Drive;
@@ -42,10 +45,14 @@ public class RobotContainer {
   private final Vision m_vision;
   private final Turret m_turret;
   private final Hopper m_hopper;
+  private final Intake m_intake;
 
   // Controller
   private final CommandXboxController m_driverController =
       new CommandXboxController(OIConstants.kDriverControllerPort);
+
+  private final CommandXboxController m_operatorController =
+      new CommandXboxController(OIConstants.kOperatorControllerPort); // TODO: ask driver what controller they want
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -65,6 +72,7 @@ public class RobotContainer {
         m_vision = new Vision(m_drive::addVisionMeasurement);
         m_turret = new Turret();
         m_hopper = new Hopper();
+        m_intake = new Intake();
         break;
 
       case SIM:
@@ -79,6 +87,7 @@ public class RobotContainer {
         m_vision = new Vision(m_drive::addVisionMeasurement);
         m_turret = new Turret();
         m_hopper = new Hopper();
+        m_intake = new Intake();
         break;
 
       default:
@@ -93,6 +102,7 @@ public class RobotContainer {
         m_vision = new Vision(m_drive::addVisionMeasurement);
         m_turret = new Turret();
         m_hopper = new Hopper();
+        m_intake = new Intake();
         break;
     }
 
@@ -163,6 +173,15 @@ public class RobotContainer {
                         new Pose2d(m_drive.getPose().getTranslation(), Rotation2d.kZero)),
                 m_drive)
             .ignoringDisable(true));
+
+    final Trigger IntakeIn = m_operatorController.y();
+    IntakeIn.whileTrue(new IntakeIn(m_intake));
+
+    final Trigger IntakeOut = m_operatorController.x();
+    IntakeOut.whileTrue(new IntakeOut(m_intake));
+
+    final Trigger IntakeUp = m_operatorController.b();
+    IntakeUp.whileTrue(new IntakeUp(m_intake));
   }
 
   /**

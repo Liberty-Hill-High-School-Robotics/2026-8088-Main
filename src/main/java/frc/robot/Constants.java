@@ -69,8 +69,8 @@ public final class Constants {
     public static final int kGyroID = 9;
 
     // Intake
-    public static final int kIntakeMotor = 10;
-    public static final int kIndexMotor = 11;
+    public static final int kIntakeMotor1 = 10;
+    public static final int kIntakeMotor2 = 11;
 
     // Turret
     public static final int kTurretPivot = 12;
@@ -79,7 +79,7 @@ public final class Constants {
     public static final int kShooterMotor = 13;
 
     // Hopper
-    public static final int kHopperMoter = 14;
+    public static final int kHopperMotor = 14;
 
     // Climber
     // TODO: figure out new climber design
@@ -88,6 +88,12 @@ public final class Constants {
   }
 
   public static final class MotorSpeeds {
+
+    // Hopper speeds
+    public static final double kHopperSpeed = 0.25;
+
+    // Intake speeds
+    public static final double kIntakeSpeed = .5;
 
     // Turret gains
     public static final double kTurretP = 0.0;

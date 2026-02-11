@@ -5,6 +5,7 @@ import com.revrobotics.spark.SparkMax;
 // all imports here
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.CanIDs;
+import frc.robot.Constants.MotorSpeeds;
 
 public class Hopper extends SubsystemBase {
 
@@ -37,7 +38,7 @@ public class Hopper extends SubsystemBase {
     barRotatorRelativeEncoder = barRotatorSparkMax.getEncoder();
     */
 
-    hopperMotor = new SparkMax(CanIDs.kHopperMoter, MotorType.kBrushless);
+    hopperMotor = new SparkMax(CanIDs.kHopperMotor, MotorType.kBrushless);
   }
 
   @Override
@@ -59,9 +60,17 @@ public class Hopper extends SubsystemBase {
   // as well as check for limits and reset encoders,
   // return true/false if limit is true, or encoder >= x value
 
-  public void doSomething() {
+  public void spinIn() {
     // motor.set(PID.calculate(position, setpoint));
     // motor.set(number);
+    hopperMotor.set(MotorSpeeds.kHopperSpeed);
+  }
 
+  public void spinOut() {
+    hopperMotor.set(-MotorSpeeds.kHopperSpeed);
+  }
+
+  public void hopperStop() {
+    hopperMotor.set(0);
   }
 }
