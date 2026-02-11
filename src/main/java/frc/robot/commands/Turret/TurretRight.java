@@ -22,7 +22,8 @@ public class TurretRight extends Command {
 
   @Override
   public void execute() {
-    m_turret.turretRight();; // call to method from turret subsystem
+    m_turret.turretRight();
+    ; // call to method from turret subsystem
   }
 
   @Override

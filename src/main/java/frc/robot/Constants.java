@@ -33,6 +33,9 @@ public final class Constants {
   public static final Mode simMode = Mode.SIM;
   public static final Mode currentMode = RobotBase.isReal() ? Mode.REAL : simMode;
 
+  public static final double kTurretXOffset = 1.0; // TODO: Not a real number
+  public static final double kTurretYOffset = 0.0;
+
   public static enum Mode {
     /** Running on a real robot. */
     REAL,
@@ -72,7 +75,7 @@ public final class Constants {
     // Hopper
     public static final int kHopperMoter = 14;
 
-    // Climber 
+    // Climber
     // TODO: figure out new climber design
     public static final int kLiftMotor = 15;
     public static final int kPiviotMotor = 16;
@@ -94,7 +97,6 @@ public final class Constants {
     public static final double kTurretError = 0.0; // Allowed profile error
 
     public static final double kTurretSpeed = .25;
-
   }
 
   public static final class OIConstants {

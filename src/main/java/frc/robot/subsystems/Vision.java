@@ -1,14 +1,5 @@
 package frc.robot.subsystems;
 
-import java.util.List;
-import java.util.Optional;
-
-import org.photonvision.EstimatedRobotPose;
-import org.photonvision.PhotonCamera;
-import org.photonvision.PhotonPoseEstimator;
-import org.photonvision.targeting.PhotonPipelineResult;
-import org.photonvision.targeting.PhotonTrackedTarget;
-
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -17,6 +8,13 @@ import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.VisionConstants;
+import java.util.List;
+import java.util.Optional;
+import org.photonvision.EstimatedRobotPose;
+import org.photonvision.PhotonCamera;
+import org.photonvision.PhotonPoseEstimator;
+import org.photonvision.targeting.PhotonPipelineResult;
+import org.photonvision.targeting.PhotonTrackedTarget;
 
 // https://docs.photonvision.org/en/latest/docs/programming/photonlib/getting-target-data.html
 // READ THIS ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -37,11 +35,9 @@ public class Vision extends SubsystemBase {
   public Vision(EstimateConsumer estConsumer) {
     this.estConsumer = estConsumer;
     frontPhotonEstimator =
-        new PhotonPoseEstimator(
-            VisionConstants.kTagLayout, VisionConstants.kFrontRobotToCam);
+        new PhotonPoseEstimator(VisionConstants.kTagLayout, VisionConstants.kFrontRobotToCam);
     sidePhotonEstimator =
-        new PhotonPoseEstimator(
-            VisionConstants.kTagLayout, VisionConstants.kSideRobotToCam);
+        new PhotonPoseEstimator(VisionConstants.kTagLayout, VisionConstants.kSideRobotToCam);
   }
 
   @Override
@@ -56,7 +52,7 @@ public class Vision extends SubsystemBase {
         visionEst = frontPhotonEstimator.estimateLowestAmbiguityPose(result);
       }
 
-      updateEstimationStdDevs(visionEst, result.getTargets(),true);
+      updateEstimationStdDevs(visionEst, result.getTargets(), true);
 
       visionEst.ifPresent(
           est -> {
@@ -74,7 +70,7 @@ public class Vision extends SubsystemBase {
         visionEst = sidePhotonEstimator.estimateLowestAmbiguityPose(result);
       }
 
-      updateEstimationStdDevs(visionEst, result.getTargets(),false);
+      updateEstimationStdDevs(visionEst, result.getTargets(), false);
 
       visionEst.ifPresent(
           est -> {
@@ -91,7 +87,6 @@ public class Vision extends SubsystemBase {
         objYaw = tgt.getYaw();
         SmartDashboard.putBoolean("FUEL", true);
         SmartDashboard.putNumber("objYaw", objYaw);
-
       }
     }
   }
@@ -111,20 +106,31 @@ public class Vision extends SubsystemBase {
    * @param isFront Whether to caluculate based off the front of side camera
    */
   private void updateEstimationStdDevs(
-      Optional<EstimatedRobotPose> estimatedPose, List<PhotonTrackedTarget> targets, Boolean isFront) {
+      Optional<EstimatedRobotPose> estimatedPose,
+      List<PhotonTrackedTarget> targets,
+      Boolean isFront) {
     if (estimatedPose.isEmpty()) {
       // No pose input. Default to single-tag std devs
-      curStdDevs = (isFront) ? VisionConstants.kFrontSingleTagStdDevs : VisionConstants.kSideSingleTagStdDevs;
+      curStdDevs =
+          (isFront)
+              ? VisionConstants.kFrontSingleTagStdDevs
+              : VisionConstants.kSideSingleTagStdDevs;
 
     } else {
       // Pose present. Start running Heuristic
-      var estStdDevs = (isFront) ? VisionConstants.kFrontSingleTagStdDevs : VisionConstants.kSideSingleTagStdDevs;
+      var estStdDevs =
+          (isFront)
+              ? VisionConstants.kFrontSingleTagStdDevs
+              : VisionConstants.kSideSingleTagStdDevs;
       int numTags = 0;
       double avgDist = 0;
 
       // Precalculation - see how many tags we found, and calculate an average-distance metric
       for (PhotonTrackedTarget tgt : targets) {
-        var tagPose = ((isFront) ?  frontPhotonEstimator : sidePhotonEstimator).getFieldTags().getTagPose(tgt.getFiducialId());
+        var tagPose =
+            ((isFront) ? frontPhotonEstimator : sidePhotonEstimator)
+                .getFieldTags()
+                .getTagPose(tgt.getFiducialId());
         if (tagPose.isEmpty()) continue;
         numTags++;
         avgDist +=
@@ -136,12 +142,19 @@ public class Vision extends SubsystemBase {
 
         if (numTags == 0) {
           // No tags visible. Default to single-tag std devs
-          curStdDevs = (isFront) ? VisionConstants.kFrontSingleTagStdDevs : VisionConstants.kSideSingleTagStdDevs;
+          curStdDevs =
+              (isFront)
+                  ? VisionConstants.kFrontSingleTagStdDevs
+                  : VisionConstants.kSideSingleTagStdDevs;
         } else {
           // One or more tags visible, run the full heuristic.
           avgDist /= numTags;
           // Decrease std devs if multiple targets are visible
-          if (numTags > 1) estStdDevs = (isFront) ? VisionConstants.kFrontMultiTagStdDevs : VisionConstants.kSideMultiTagStdDevs;
+          if (numTags > 1)
+            estStdDevs =
+                (isFront)
+                    ? VisionConstants.kFrontMultiTagStdDevs
+                    : VisionConstants.kSideMultiTagStdDevs;
           // Increase std devs based on (average) distance
           if (numTags == 1 && avgDist > 4)
             estStdDevs = VecBuilder.fill(Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE);
