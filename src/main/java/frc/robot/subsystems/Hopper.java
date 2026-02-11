@@ -1,8 +1,8 @@
 package frc.robot.subsystems;
 
+// all imports here
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
-// all imports here
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.CanIDs;
 import frc.robot.Constants.MotorSpeeds;
@@ -10,34 +10,10 @@ import frc.robot.Constants.MotorSpeeds;
 public class Hopper extends SubsystemBase {
 
   // motors & variables here, define them and create any PIDs needed
-  /* ex:
-  private CANSparkMax barRotatorSparkMax;
-  private SparkLimitSwitch barReverseLimitSwitch;
-  public static RelativeEncoder barRotatorRelativeEncoder;
-  PIDController barPID = new PIDController(BarConstants.bP, BarConstants.bI, BarConstants.bD);
-  */
-
   private SparkMax hopperMotor;
 
   public Hopper() {
     // config motor settings here
-
-    /*
-    ex:
-    barRotatorSparkMax = new CANSparkMax(CanIDs.barRotatorID, MotorType.kBrushless);
-    //barRotatorSparkMax.restoreFactoryDefaults();
-    barRotatorSparkMax.setInverted(true);
-    barRotatorSparkMax.setIdleMode(IdleMode.kBrake);
-    barRotatorSparkMax.setSmartCurrentLimit(40);
-
-    barReverseLimitSwitch = barRotatorSparkMax.getReverseLimitSwitch(Type.kNormallyOpen);
-
-    barRotatorSparkMax.enableSoftLimit(SoftLimitDirection.kForward, true);
-    barRotatorSparkMax.setSoftLimit(SoftLimitDirection.kForward, BarConstants.fLimit);
-
-    barRotatorRelativeEncoder = barRotatorSparkMax.getEncoder();
-    */
-
     hopperMotor = new SparkMax(CanIDs.kHopperMotor, MotorType.kBrushless);
   }
 
@@ -60,13 +36,11 @@ public class Hopper extends SubsystemBase {
   // as well as check for limits and reset encoders,
   // return true/false if limit is true, or encoder >= x value
 
-  public void spinIn() {
-    // motor.set(PID.calculate(position, setpoint));
-    // motor.set(number);
+  public void hopperIn() {
     hopperMotor.set(MotorSpeeds.kHopperSpeed);
   }
 
-  public void spinOut() {
+  public void hopperOut() {
     hopperMotor.set(-MotorSpeeds.kHopperSpeed);
   }
 

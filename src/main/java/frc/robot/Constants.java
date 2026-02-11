@@ -69,8 +69,8 @@ public final class Constants {
     public static final int kGyroID = 9;
 
     // Intake
-    public static final int kIntakeMotor1 = 10;
-    public static final int kIntakeMotor2 = 11;
+    public static final int kIntakeMotor = 10;
+    public static final int kIndexMotor = 11;
 
     // Turret
     public static final int kTurretPivot = 12;

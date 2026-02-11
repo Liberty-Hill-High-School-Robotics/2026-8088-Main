@@ -10,20 +10,14 @@ import frc.robot.Constants.MotorSpeeds;
 public class Intake extends SubsystemBase {
 
   // motors & variables here, define them and create any PIDs needed
-  /* ex:
-  private CANSparkMax barRotatorSparkMax;
-  private SparkLimitSwitch barReverseLimitSwitch;
-  public static RelativeEncoder barRotatorRelativeEncoder;
-  PIDController barPID = new PIDController(BarConstants.bP, BarConstants.bI, BarConstants.bD);
-  */
-  private SparkFlex intakeMotor1;
+  private SparkFlex intakeMotor;
 
-  private SparkFlex intakeMotor2;
+  private SparkFlex indexMotor;
 
   public Intake() {
     // config motor settings here
-    intakeMotor1 = new SparkFlex(CanIDs.kIntakeMotor1, MotorType.kBrushless);
-    intakeMotor2 = new SparkFlex(CanIDs.kIntakeMotor2, MotorType.kBrushless);
+    intakeMotor = new SparkFlex(CanIDs.kIntakeMotor, MotorType.kBrushless);
+    indexMotor = new SparkFlex(CanIDs.kIndexMotor, MotorType.kBrushless);
     // Put smartdashboard stuff, check for limit switches
   }
 
@@ -41,22 +35,22 @@ public class Intake extends SubsystemBase {
   // return true/false if limit is true, or encoder >= x value
 
   public void intakeIn() {
-    intakeMotor1.set(MotorSpeeds.kIntakeSpeed);
-    intakeMotor2.set(MotorSpeeds.kIntakeSpeed);
+    intakeMotor.set(MotorSpeeds.kIntakeSpeed);
+    indexMotor.set(MotorSpeeds.kIntakeSpeed);
   }
 
   public void intakeUp() {
-    intakeMotor1.set(MotorSpeeds.kIntakeSpeed);
-    intakeMotor2.set(-MotorSpeeds.kIntakeSpeed);
+    intakeMotor.set(MotorSpeeds.kIntakeSpeed);
+    indexMotor.set(-MotorSpeeds.kIntakeSpeed);
   }
 
   public void intakeOut() {
-    intakeMotor1.set(-MotorSpeeds.kIntakeSpeed);
-    intakeMotor2.set(-MotorSpeeds.kIntakeSpeed);
+    intakeMotor.set(-MotorSpeeds.kIntakeSpeed);
+    indexMotor.set(-MotorSpeeds.kIntakeSpeed);
   }
 
   public void intakeStop() {
-    intakeMotor1.set(0);
-    intakeMotor2.set(0);
+    intakeMotor.set(0);
+    indexMotor.set(0);
   }
 }

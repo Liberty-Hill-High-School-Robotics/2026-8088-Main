@@ -52,7 +52,8 @@ public class RobotContainer {
       new CommandXboxController(OIConstants.kDriverControllerPort);
 
   private final CommandXboxController m_operatorController =
-      new CommandXboxController(OIConstants.kOperatorControllerPort); // TODO: ask driver what controller they want
+      new CommandXboxController(
+          OIConstants.kOperatorControllerPort); // TODO: ask driver what controller they want
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;

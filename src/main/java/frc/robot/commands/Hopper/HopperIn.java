@@ -8,11 +8,11 @@ import frc.robot.subsystems.Hopper;
  * pedagogical purposes. Actual code should inline a command this simple with {@link
  * edu.wpi.first.wpilibj2.command.InstantCommand}.
  */
-public class SpinOut extends Command {
+public class HopperIn extends Command {
   // The subsystem the command runs on
   private final Hopper m_hopper;
 
-  public SpinOut(Hopper subsystem) {
+  public HopperIn(Hopper subsystem) {
     m_hopper = subsystem;
     addRequirements(m_hopper);
   }
@@ -22,7 +22,7 @@ public class SpinOut extends Command {
 
   @Override
   public void execute() {
-    m_hopper.spinOut();
+    m_hopper.hopperIn();
   }
 
   @Override
