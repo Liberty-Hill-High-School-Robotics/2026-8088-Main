@@ -11,6 +11,8 @@ import com.revrobotics.spark.SparkLimitSwitch;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -18,19 +20,14 @@ import frc.robot.Constants.CanIDs;
 import frc.robot.Constants.MotorSpeeds;
 
 public class Turret extends SubsystemBase {
-
   // motors & variables here, define them and create any PIDs needed
-  /* ex:
-  private CANSparkMax barRotatorSparkMax;
-  private SparkLimitSwitch barReverseLimitSwitch;
-  public static RelativeEncoder barRotatorRelativeEncoder;
-  PIDController barPID = new PIDController(BarConstants.bP, BarConstants.bI, BarConstants.bD);
-  */
 
   private SparkFlex turretPivot;
   private SparkLimitSwitch turretForwardLimit;
   private SparkLimitSwitch turretReverseLimitSwitch;
   SparkClosedLoopController turretController;
+
+  private Field2d turretField = new Field2d();
 
   public Turret() {
     // config motor settings here
@@ -71,14 +68,16 @@ public class Turret extends SubsystemBase {
     SmartDashboard.putBoolean("Forward Limit", turretForwardLimit.isPressed());
     SmartDashboard.putBoolean("Reverse Limit", turretReverseLimitSwitch.isPressed());
     SmartDashboard.putNumber("Turret Velocity", turretPivot.getEncoder().getVelocity());
-    SmartDashboard.putNumber("Turret Position", turretPivot.getEncoder().getPosition());
+    SmartDashboard.putNumber(
+        "Turret Position",
+        turretPivot.getEncoder().getPosition()); // TODO: check if in ticks or rotations
 
     if (turretReverseLimitSwitch.isPressed()) {
       turretPivot.getEncoder().setPosition(0);
     }
 
     if (turretForwardLimit.isPressed()) {
-      turretPivot.getEncoder().setPosition(10); // TODO: get a real number from physical turret
+      turretPivot.getEncoder().setPosition(Constants.kTurretForwardLimit);
     }
   }
 
@@ -95,26 +94,28 @@ public class Turret extends SubsystemBase {
   // as well as check for limits and reset encoders,
   // return true/false if limit is true, or encoder >= x value
 
+  // Point the turret at a specific point on the field
   public void goToSetpoint(Pose2d setPoint) {
-    // https://docs.revrobotics.com/revlib/spark/closed-loop/maxmotion-position-control
-
     // get position of the robot
     double driveX = SmartDashboard.getNumber("Drive X", 0);
     double driveY = SmartDashboard.getNumber("Drive Y", 0);
     double driveOm = SmartDashboard.getNumber("Drive Om", 0);
 
-
-
     double turretX = driveX + Constants.kTurretXOffset;
     double turretY = driveY + Constants.kTurretYOffset;
-    turretPivot.getEncoder().getPosition()/10 // 10:1 reduction TODO: test with actual turret
-    double turretOm = driveOm + ; 
+    double turretOm = getTurretFieldAngleDegrees(driveOm);
 
-    // translation from field cords to turret rotation
+    Pose2d turretPose = new Pose2d(turretX, turretY, Rotation2d.fromDegrees(turretOm));
+
     double x = setPoint.getX();
     double y = setPoint.getY();
 
+    // https://docs.revrobotics.com/revlib/spark/closed-loop/maxmotion-position-control
     turretController.setSetpoint(0.0, SparkBase.ControlType.kMAXMotionPositionControl);
+
+    turretField.setRobotPose(turretPose);
+    SmartDashboard.putData(
+        "Turret Pose", turretField); // Use to display turret on field for testing
   }
 
   public void turretStop() {
@@ -127,5 +128,23 @@ public class Turret extends SubsystemBase {
 
   public void turretLeft() {
     turretPivot.set(-MotorSpeeds.kTurretSpeed);
+  }
+
+  // Returns the current turret angle in degrees
+  public double getTurretAngleDegrees() {
+    double turretRotations = turretPivot.getEncoder().getPosition() / 10; // 10:1 reduction
+    double angleDeg =
+        (turretRotations) * 360.0
+            - Constants.kTurretZeroOffset; // convert rotations to degrees and apply offset
+
+    return angleDeg;
+  }
+
+  // Returns the turret's absolute heading in field coordinates (degrees).
+  public double getTurretFieldAngleDegrees(double driveHeadingDeg) {
+    double turretDeg = getTurretAngleDegrees();
+    double fieldDeg =
+        driveHeadingDeg + (90 - turretDeg); // combine robot heading and turret relative angle
+    return fieldDeg;
   }
 }

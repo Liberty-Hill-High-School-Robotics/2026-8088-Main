@@ -36,6 +36,12 @@ public final class Constants {
   public static final double kTurretXOffset = 1.0; // TODO: Not a real number
   public static final double kTurretYOffset = 0.0;
 
+  public static final double kTurretMaxAngle =
+      270.0; // TODO: get a real number from physical turret
+  public static final double kTurretForwardLimit =
+      7.5; // TODO: get a real number from physical turret
+  public static final double kTurretZeroOffset = (kTurretMaxAngle - 180) / 2;
+
   public static enum Mode {
     /** Running on a real robot. */
     REAL,
