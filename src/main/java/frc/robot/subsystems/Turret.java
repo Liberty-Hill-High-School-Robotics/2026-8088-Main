@@ -25,7 +25,7 @@ public class Turret extends SubsystemBase {
   private SparkFlex turretPivot;
   private SparkLimitSwitch turretForwardLimit;
   private SparkLimitSwitch turretReverseLimitSwitch;
-  SparkClosedLoopController turretController;
+  private SparkClosedLoopController turretController;
 
   private Field2d turretField = new Field2d();
 

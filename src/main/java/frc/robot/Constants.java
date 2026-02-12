@@ -109,6 +109,15 @@ public final class Constants {
     public static final double kTurretError = 0.0; // Allowed profile error
 
     public static final double kTurretSpeed = .25;
+
+    // Shooter gains
+    public static final double kShooterP = 0.0;
+    public static final double kShooterI = 0.0;
+    public static final double kShooterD = 0.0;
+    // https://docs.revrobotics.com/revlib/spark/closed-loop/feed-forward-control
+    public static final double kShooterS = 0.0; // Static
+    public static final double kShooterV = 0.0; // Velocity
+    public static final double kShooterA = 0.0; // Acceleration
   }
 
   public static final class OIConstants {
