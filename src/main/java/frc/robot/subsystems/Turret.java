@@ -100,7 +100,7 @@ public class Turret extends SubsystemBase {
   // return true/false if limit is true, or encoder >= x value
 
   // Point the turret at a specific point on the field
-  public void shootInHub() {
+  public void TurretPointAtHub() {
     Pose2d setpoint;
     if (DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue) {
       setpoint = FieldConstants.kBlueHubPose;
