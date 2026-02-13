@@ -19,10 +19,13 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.OIConstants;
 import frc.robot.commands.DriveCommands;
-import frc.robot.commands.Hopper.*;
-import frc.robot.commands.Intake.*;
+import frc.robot.commands.Intake.IntakeIn;
+import frc.robot.commands.Intake.IntakeOut;
+import frc.robot.commands.Intake.IntakeUp;
+import frc.robot.commands.ShootInHub;
 import frc.robot.subsystems.Hopper;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.Vision;
 import frc.robot.subsystems.drive.Drive;
@@ -46,6 +49,7 @@ public class RobotContainer {
   private final Turret m_turret;
   private final Hopper m_hopper;
   private final Intake m_intake;
+  private final Shooter m_shooter;
 
   // Controller
   private final CommandXboxController m_driverController =
@@ -74,6 +78,7 @@ public class RobotContainer {
         m_turret = new Turret();
         m_hopper = new Hopper();
         m_intake = new Intake();
+        m_shooter = new Shooter();
         break;
 
       case SIM:
@@ -89,6 +94,7 @@ public class RobotContainer {
         m_turret = new Turret();
         m_hopper = new Hopper();
         m_intake = new Intake();
+        m_shooter = new Shooter();
         break;
 
       default:
@@ -104,6 +110,7 @@ public class RobotContainer {
         m_turret = new Turret();
         m_hopper = new Hopper();
         m_intake = new Intake();
+        m_shooter = new Shooter();
         break;
     }
 
@@ -183,6 +190,9 @@ public class RobotContainer {
 
     final Trigger IntakeUp = m_operatorController.b();
     IntakeUp.whileTrue(new IntakeUp(m_intake));
+
+    final Trigger TurretTest = m_driverController.rightBumper();
+    TurretTest.toggleOnTrue(new ShootInHub(m_turret, m_shooter));
   }
 
   /**

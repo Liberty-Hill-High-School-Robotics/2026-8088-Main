@@ -12,11 +12,15 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.CanIDs;
+import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.MotorSpeeds;
 
 public class Turret extends SubsystemBase {
@@ -28,6 +32,7 @@ public class Turret extends SubsystemBase {
   private SparkClosedLoopController turretController;
 
   private Field2d turretField = new Field2d();
+  private Field2d targetField = new Field2d();
 
   public Turret() {
     // config motor settings here
@@ -95,20 +100,51 @@ public class Turret extends SubsystemBase {
   // return true/false if limit is true, or encoder >= x value
 
   // Point the turret at a specific point on the field
-  public void goToSetpoint(Pose2d setPoint) {
+  public void shootInHub() {
+    Pose2d setpoint;
+    if (DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue) {
+      setpoint = FieldConstants.kBlueHubPose;
+    } else {
+      setpoint = FieldConstants.kRedHubPose; // TODO: add red hub pose to constants
+    }
     // get position of the robot
     double driveX = SmartDashboard.getNumber("Drive X", 0);
     double driveY = SmartDashboard.getNumber("Drive Y", 0);
     double driveOm = SmartDashboard.getNumber("Drive Om", 0);
 
-    double turretX = driveX + Constants.kTurretXOffset;
-    double turretY = driveY + Constants.kTurretYOffset;
+    double turretX = Math.cos(Units.degreesToRadians(driveOm)) * Constants.kTurretXOffset + driveX;
+    double turretY = Math.sin(Units.degreesToRadians(driveOm)) * Constants.kTurretXOffset + driveY;
     double turretOm = getTurretFieldAngleDegrees(driveOm);
 
     Pose2d turretPose = new Pose2d(turretX, turretY, Rotation2d.fromDegrees(turretOm));
 
-    double x = setPoint.getX();
-    double y = setPoint.getY();
+    double x = setpoint.getX();
+    double y = setpoint.getY();
+
+    double robotToTargetY = 0;
+    double robotToTargetX = 0;
+    double angleToTarget = 0;
+
+    if (turretY < y) {
+      robotToTargetY = y - turretY;
+      robotToTargetX = x - turretX;
+      angleToTarget = Units.radiansToDegrees(Math.atan2(robotToTargetY, robotToTargetX));
+    } else {
+      robotToTargetY = turretY - y;
+      robotToTargetX = turretX - x;
+      angleToTarget = Units.radiansToDegrees(Math.atan2(robotToTargetY, robotToTargetX)) - 180;
+    }
+
+    double robotToTarget = Math.hypot(robotToTargetX, robotToTargetY);
+
+    SmartDashboard.putNumber("Robot to Target X", robotToTargetX);
+    SmartDashboard.putNumber("Robot to Target Y", robotToTargetY);
+    SmartDashboard.putNumber("Turret Angle to Target", angleToTarget);
+    SmartDashboard.putNumber("Turret Distance to Target", angleToTarget);
+
+    double angleToTargetRotations = getTargetAngleRotations(driveOm, angleToTarget);
+
+    SmartDashboard.putNumber("Turret Angle to Target Rotations", angleToTargetRotations);
 
     // https://docs.revrobotics.com/revlib/spark/closed-loop/maxmotion-position-control
     turretController.setSetpoint(0.0, SparkBase.ControlType.kMAXMotionPositionControl);
@@ -116,6 +152,8 @@ public class Turret extends SubsystemBase {
     turretField.setRobotPose(turretPose);
     SmartDashboard.putData(
         "Turret Pose", turretField); // Use to display turret on field for testing
+    targetField.setRobotPose(setpoint);
+    SmartDashboard.putData("Turret Target", targetField);
   }
 
   public void turretStop() {
@@ -146,5 +184,12 @@ public class Turret extends SubsystemBase {
     double fieldDeg =
         driveHeadingDeg + (90 - turretDeg); // combine robot heading and turret relative angle
     return fieldDeg;
+  }
+
+  // Returns an encoder value based on the target angle
+  public double getTargetAngleRotations(double driveOm, double angleToTargetField) {
+    double motorRotations =
+        (((driveOm + 90.0 - angleToTargetField) + Constants.kTurretZeroOffset) / 360.0) * 10.0;
+    return motorRotations;
   }
 }

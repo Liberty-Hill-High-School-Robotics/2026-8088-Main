@@ -8,7 +8,6 @@ import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkFlexConfig;
-
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 // all imports here
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -27,17 +26,16 @@ public class Shooter extends SubsystemBase {
     shooterController = shooterMotor.getClosedLoopController();
     SparkFlexConfig config = new SparkFlexConfig();
     config
-      .closedLoop
-      .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-      .p(MotorSpeeds.kShooterP)
-      .i(MotorSpeeds.kShooterI)
-      .d(MotorSpeeds.kShooterD)
-      .feedForward
-      .kS(MotorSpeeds.kShooterS)
-      .kV(MotorSpeeds.kShooterV)
-      .kA(MotorSpeeds.kShooterA);
+        .closedLoop
+        .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
+        .p(MotorSpeeds.kShooterP)
+        .i(MotorSpeeds.kShooterI)
+        .d(MotorSpeeds.kShooterD)
+        .feedForward
+        .kS(MotorSpeeds.kShooterS)
+        .kV(MotorSpeeds.kShooterV)
+        .kA(MotorSpeeds.kShooterA);
     shooterMotor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-
   }
 
   @Override
@@ -64,5 +62,9 @@ public class Shooter extends SubsystemBase {
     double setpoint = distance; // TODO: Equation to convert distance to velocity goes here
     SmartDashboard.putNumber("Shooter Setpoint", setpoint);
     shooterController.setSetpoint(setpoint, ControlType.kVelocity);
+  }
+
+  public void shooterStop() {
+    shooterMotor.set(0);
   }
 }

@@ -17,11 +17,14 @@ import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
 
 /**
@@ -33,8 +36,8 @@ public final class Constants {
   public static final Mode simMode = Mode.SIM;
   public static final Mode currentMode = RobotBase.isReal() ? Mode.REAL : simMode;
 
-  public static final double kTurretXOffset = 1.0; // TODO: Not a real number
-  public static final double kTurretYOffset = 0.0;
+  public static final double kTurretXOffset = Units.inchesToMeters(3.78230505);
+  public static final double kTurretYOffset = 0;
 
   public static final double kTurretMaxAngle =
       270.0; // TODO: get a real number from physical turret
@@ -150,5 +153,13 @@ public final class Constants {
     // (Fake values. Experiment and determine estimation noise on an actual robot.)
     public static final Matrix<N3, N1> kSideSingleTagStdDevs = VecBuilder.fill(4, 4, 8);
     public static final Matrix<N3, N1> kSideMultiTagStdDevs = VecBuilder.fill(0.5, 0.5, 1);
+  }
+
+  public static final class FieldConstants {
+    public static final Pose2d kBlueHubPose =
+        new Pose2d(Units.inchesToMeters(181.56), Units.inchesToMeters(158.32), new Rotation2d());
+
+    public static final Pose2d kRedHubPose =
+        new Pose2d(Units.inchesToMeters(468.56), Units.inchesToMeters(158.32), new Rotation2d());
   }
 }
