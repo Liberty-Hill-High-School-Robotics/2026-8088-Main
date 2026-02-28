@@ -8,6 +8,7 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -116,6 +117,10 @@ public class RobotContainer {
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
+
+    // Named Comands for PathPlanner autos
+    NamedCommands.registerCommand("IntakeIn", new IntakeIn(m_intake));
+    NamedCommands.registerCommand("ShootInHub", new ShootInHub(m_turret, m_shooter));
 
     // Set up SysId routines
     autoChooser.addOption(

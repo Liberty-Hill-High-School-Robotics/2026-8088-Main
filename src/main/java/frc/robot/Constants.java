@@ -45,6 +45,8 @@ public final class Constants {
       7.5; // TODO: get a real number from physical turret
   public static final double kTurretZeroOffset = (kTurretMaxAngle - 180) / 2;
 
+  public static final double kTurretAllowedError = 0.1;
+
   public static enum Mode {
     /** Running on a real robot. */
     REAL,
@@ -136,7 +138,10 @@ public final class Constants {
 
     public static final Transform3d kFrontRobotToCam =
         new Transform3d(
-            new Translation3d(Units.inchesToMeters(10.72816001), Units.inchesToMeters(9.7311548), Units.inchesToMeters(12.4486466)),
+            new Translation3d(
+                Units.inchesToMeters(10.72816001),
+                Units.inchesToMeters(9.7311548),
+                Units.inchesToMeters(12.4486466)),
             new Rotation3d(0, 0, 0)); // TODO: get real numbers from CAD
 
     // The standard deviations of our vision estimated poses, which affect correction rate

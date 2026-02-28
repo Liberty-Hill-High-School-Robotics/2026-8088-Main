@@ -1,0 +1,75 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 4.46,
+        "y": 7.26
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 4.71,
+        "y": 7.26
+      },
+      "isLocked": false,
+      "linkedName": "Start Top"
+    },
+    {
+      "anchor": {
+        "x": 5.6,
+        "y": 7.26
+      },
+      "prevControl": {
+        "x": 5.35,
+        "y": 7.26
+      },
+      "nextControl": {
+        "x": 5.85,
+        "y": 7.26
+      },
+      "isLocked": false,
+      "linkedName": "Trench Point Top"
+    },
+    {
+      "anchor": {
+        "x": 7.465,
+        "y": 6.275
+      },
+      "prevControl": {
+        "x": 6.390197692596447,
+        "y": 7.349802307403553
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "Center Top"
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 1.0,
+      "rotationDegrees": 180.0
+    }
+  ],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": -45.0
+  },
+  "reversed": false,
+  "folder": "For Top Auton",
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": 180.0
+  },
+  "useDefaultConstraints": true
+}

@@ -61,7 +61,9 @@ public class Shooter extends SubsystemBase {
   public void shootAtSpeed(double distance) {
     double setpoint = distance; // TODO: Equation to convert distance to velocity goes here
     SmartDashboard.putNumber("Shooter Setpoint", setpoint);
-    shooterController.setSetpoint(setpoint, ControlType.kVelocity);
+    if (SmartDashboard.getBoolean("Turret On Target", true)) {
+      shooterController.setSetpoint(setpoint, ControlType.kVelocity);
+    }
   }
 
   public void shooterStop() {

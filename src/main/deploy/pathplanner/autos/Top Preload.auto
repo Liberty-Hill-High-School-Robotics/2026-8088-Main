@@ -7,13 +7,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Example Path"
+            "pathName": "8( Top"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ShootInHub"
           }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": null,
+  "folder": "1",
   "choreoAuto": false
 }
