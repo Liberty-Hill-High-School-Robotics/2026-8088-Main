@@ -75,9 +75,7 @@ public class Turret extends SubsystemBase {
     SmartDashboard.putBoolean("Forward Limit", turretForwardLimit.isPressed());
     SmartDashboard.putBoolean("Reverse Limit", turretReverseLimitSwitch.isPressed());
     SmartDashboard.putNumber("Turret Velocity", turretPivot.getEncoder().getVelocity());
-    SmartDashboard.putNumber(
-        "Turret Position",
-        turretPivot.getEncoder().getPosition()); // TODO: check if in ticks or rotations
+    SmartDashboard.putNumber("Turret Position", turretPivot.getEncoder().getPosition());
 
     if (turretReverseLimitSwitch.isPressed()) {
       turretPivot.getEncoder().setPosition(0);
@@ -91,7 +89,7 @@ public class Turret extends SubsystemBase {
     if (DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue) {
       setpoint = FieldConstants.kBlueHubPose;
     } else {
-      setpoint = FieldConstants.kRedHubPose; // TODO: add red hub pose to constants
+      setpoint = FieldConstants.kRedHubPose;
     }
     // get position of the robot
     double driveX = SmartDashboard.getNumber("Drive X", 0);
@@ -176,6 +174,10 @@ public class Turret extends SubsystemBase {
 
   public void turretLeft() {
     turretPivot.set(-MotorSpeeds.kTurretSpeed);
+  }
+
+  public void turretToSetpoint(double overideSetpoint) {
+    turretController.setSetpoint(overideSetpoint, SparkBase.ControlType.kMAXMotionPositionControl);
   }
 
   // Returns the current turret angle in degrees

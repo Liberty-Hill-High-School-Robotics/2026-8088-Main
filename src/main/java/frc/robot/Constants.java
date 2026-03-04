@@ -47,6 +47,9 @@ public final class Constants {
 
   public static final double kTurretAllowedError = 0.1;
 
+  public static final double kFallBackDistance =
+      2; // TODO: find a consistant distance to fall back on if vision is not working
+
   public static enum Mode {
     /** Running on a real robot. */
     REAL,
@@ -74,8 +77,8 @@ public final class Constants {
     public static final int kGyroID = 9;
 
     // Intake
-    public static final int kIntakeMotor = 10;
-    public static final int kIndexMotor = 11;
+    public static final int kIntakeMotor = 11;
+    public static final int kIndexMotor = 10;
 
     // Turret
     public static final int kTurretPivot = 12;
@@ -116,13 +119,22 @@ public final class Constants {
     public static final double kTurretSpeed = .25;
 
     // Shooter gains
-    public static final double kShooterP = 0.0;
-    public static final double kShooterI = 0.0;
+    public static final double kShooterP = 0.00034;
+    public static final double kShooterI = 0.0000000001;
     public static final double kShooterD = 0.0;
     // https://docs.revrobotics.com/revlib/spark/closed-loop/feed-forward-control
-    public static final double kShooterS = 0.0; // Static
-    public static final double kShooterV = 0.0; // Velocity
+    public static final double kShooterS = 0.173; // Static
+    public static final double kShooterV = 0.0017649115044248; // Velocity
     public static final double kShooterA = 0.0; // Acceleration
+
+    // Shooter back motor gains
+    public static final double kShooterBackP = 0.00000001;
+    public static final double kShooterBackI = 0.0000000001;
+    public static final double kShooterBackD = 0.0;
+    // https://docs.revrobotics.com/revlib/spark/closed-loop/feed-forward-control
+    public static final double kShooterBackS = 0.220; // Static
+    public static final double kShooterBackV = 0.0020999115044248; // Velocity
+    public static final double kShooterBackA = 0.0; // Acceleration
   }
 
   public static final class OIConstants {
@@ -142,7 +154,7 @@ public final class Constants {
                 Units.inchesToMeters(10.72816001),
                 Units.inchesToMeters(9.7311548),
                 Units.inchesToMeters(12.4486466)),
-            new Rotation3d(0, 0, 0)); // TODO: get real numbers from CAD
+            new Rotation3d(0, Units.degreesToRadians(15), 0));
 
     // The standard deviations of our vision estimated poses, which affect correction rate
     // (Fake values. Experiment and determine estimation noise on an actual robot.)

@@ -19,11 +19,15 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.OIConstants;
+import frc.robot.commands.BallEject;
+import frc.robot.commands.BallToHopper;
+import frc.robot.commands.DetectAndIntake;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.Intake.IntakeIn;
-import frc.robot.commands.Intake.IntakeOut;
-import frc.robot.commands.Intake.IntakeUp;
 import frc.robot.commands.ShootInHub;
+import frc.robot.commands.Shooter.ShootAtSpeed;
+import frc.robot.commands.Turret.TurretLeft;
+import frc.robot.commands.Turret.TurretToSetpoint;
 import frc.robot.subsystems.Hopper;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
@@ -120,7 +124,8 @@ public class RobotContainer {
 
     // Named Comands for PathPlanner autos
     NamedCommands.registerCommand("IntakeIn", new IntakeIn(m_intake));
-    NamedCommands.registerCommand("ShootInHub", new ShootInHub(m_turret, m_shooter));
+    NamedCommands.registerCommand(
+        "ShootInHub", new ShootInHub(m_intake, m_turret, m_shooter, m_hopper));
 
     // Set up SysId routines
     autoChooser.addOption(
@@ -164,14 +169,7 @@ public class RobotContainer {
      * CommandName.toggleontrue(new commandFromCode(m_subsystem(s)));
      */
 
-    // Lock to 0° when A button is held
-    final Trigger JoystickDriveAtZero = m_driverController.a();
-    JoystickDriveAtZero.whileTrue(
-        DriveCommands.joystickDriveAtAngle(
-            m_drive,
-            () -> -m_driverController.getLeftY(),
-            () -> -m_driverController.getLeftX(),
-            () -> Rotation2d.kZero));
+    // Setup for Driver
 
     // Switch to X pattern when X button is pressed
     final Trigger XPattern = m_driverController.x();
@@ -187,17 +185,64 @@ public class RobotContainer {
                 m_drive)
             .ignoringDisable(true));
 
-    final Trigger IntakeIn = m_operatorController.y();
-    IntakeIn.whileTrue(new IntakeIn(m_intake));
+    // Lock to 0° when Y button is held
+    final Trigger JoystickDriveAtZero = m_driverController.y();
+    JoystickDriveAtZero.whileTrue(
+        DriveCommands.joystickDriveAtAngle(
+            m_drive,
+            () -> -m_driverController.getLeftY(),
+            () -> -m_driverController.getLeftX(),
+            () -> Rotation2d.kZero));
 
-    final Trigger IntakeOut = m_operatorController.x();
-    IntakeOut.whileTrue(new IntakeOut(m_intake));
+    // Lock to 45° when left bumper is held, for use when crossing the trench
+    final Trigger DriveCrossTrench = m_driverController.leftBumper();
+    DriveCrossTrench.whileTrue(
+        DriveCommands.joystickDriveAtAngle(
+            m_drive,
+            () -> -m_driverController.getLeftY(),
+            () -> -m_driverController.getLeftX(),
+            () -> Rotation2d.fromDegrees(45)));
 
-    final Trigger IntakeUp = m_operatorController.b();
-    IntakeUp.whileTrue(new IntakeUp(m_intake));
+    // Automatic Intake when Right bumper is held
+    final Trigger AutoIntake = m_driverController.rightBumper();
+    AutoIntake.whileTrue(new DetectAndIntake(m_vision, m_drive, m_intake, m_hopper));
 
-    final Trigger TurretTest = m_driverController.rightBumper();
-    TurretTest.toggleOnTrue(new ShootInHub(m_turret, m_shooter));
+    // Setup for Operator
+
+    // Shoots balls into hub when right bumper is pressed
+    final Trigger ShootInHub = m_operatorController.rightBumper();
+    ShootInHub.toggleOnTrue(new ShootInHub(m_intake, m_turret, m_shooter, m_hopper));
+
+    // Shoots balls into Aliance Zone when Left Bumper is pressed
+    // final Trigger AirMail = m_operatorController.rightBumper();
+    // AirMail.toggleOnTrue(new ShootInHub(m_intake, m_turret, m_shooter, m_hopper));
+
+    // Ejects balls out of the robot while Y button is held
+    final Trigger Eject = m_operatorController.y();
+    Eject.whileTrue(new BallEject(m_intake, m_hopper));
+
+    // Override to run the intake without obj detection when X button is pressed
+    final Trigger IntakeInOverride = m_operatorController.x();
+    IntakeInOverride.toggleOnTrue(new BallToHopper(m_intake, m_hopper));
+
+    // Override to move turret left while left on the D-pad is held
+    final Trigger TurretLeftOverride = m_operatorController.povLeft();
+    TurretLeftOverride.whileTrue(new TurretLeft(m_turret));
+
+    // Override to move turret right while right on the D-pad is held
+    final Trigger TurretRightOverride = m_operatorController.povRight();
+    TurretRightOverride.whileTrue(new TurretLeft(m_turret));
+
+    // Override to center the turret when B button is pressed
+    final Trigger TurretCenterOverride = m_operatorController.b();
+    TurretCenterOverride.toggleOnTrue(
+        new TurretToSetpoint(m_turret, Constants.kTurretForwardLimit / 2));
+
+    // Override to shoot at a set Speed when A button is pressed
+    final Trigger ShootAtFallbackSpeed = m_operatorController.a();
+    ShootAtFallbackSpeed.toggleOnTrue(
+        new ShootAtSpeed(
+            m_shooter, Constants.kFallBackDistance)); // find a consistant distance to fall back on
   }
 
   /**

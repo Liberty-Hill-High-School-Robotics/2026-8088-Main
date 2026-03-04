@@ -8,12 +8,14 @@ import frc.robot.subsystems.Turret;
  * pedagogical purposes. Actual code should inline a command this simple with {@link
  * edu.wpi.first.wpilibj2.command.InstantCommand}.
  */
-public class TurretPointAtHub extends Command {
+public class TurretToSetpoint extends Command {
   // The subsystem the command runs on
   private final Turret m_turret;
+  private double overrideSetpoint;
 
-  public TurretPointAtHub(Turret subsystem) {
+  public TurretToSetpoint(Turret subsystem, double overrideSetpoint) {
     m_turret = subsystem;
+    this.overrideSetpoint = overrideSetpoint;
     addRequirements(m_turret);
   }
 
@@ -22,7 +24,7 @@ public class TurretPointAtHub extends Command {
 
   @Override
   public void execute() {
-    m_turret.TurretPointAtHub();
+    m_turret.turretToSetpoint(overrideSetpoint);
   }
 
   @Override

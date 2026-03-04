@@ -83,7 +83,7 @@ public class Vision extends SubsystemBase {
     // Object Detection
     for (PhotonPipelineResult result : OBJCam.getAllUnreadResults()) {
       if (result.hasTargets()) {
-        PhotonTrackedTarget tgt = result.getBestTarget();
+        PhotonTrackedTarget tgt = result.getBestTarget(); // get the target that takes up most area, typically the closest
         objYaw = tgt.getYaw();
         SmartDashboard.putBoolean("FUEL", true);
         SmartDashboard.putNumber("objYaw", objYaw);
@@ -173,9 +173,5 @@ public class Vision extends SubsystemBase {
   @FunctionalInterface
   public static interface EstimateConsumer {
     public void accept(Pose2d pose, double timestamp, Matrix<N3, N1> estimationStdDevs);
-  }
-
-  public double getObjYaw() {
-    return objYaw;
   }
 }
