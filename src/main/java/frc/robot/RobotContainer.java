@@ -27,6 +27,7 @@ import frc.robot.commands.Intake.IntakeIn;
 import frc.robot.commands.ShootInHub;
 import frc.robot.commands.Shooter.ShootAtSpeed;
 import frc.robot.commands.Turret.TurretLeft;
+import frc.robot.commands.Turret.TurretRight;
 import frc.robot.commands.Turret.TurretToSetpoint;
 import frc.robot.subsystems.Hopper;
 import frc.robot.subsystems.Intake;
@@ -231,7 +232,7 @@ public class RobotContainer {
 
     // Override to move turret right while right on the D-pad is held
     final Trigger TurretRightOverride = m_operatorController.povRight();
-    TurretRightOverride.whileTrue(new TurretLeft(m_turret));
+    TurretRightOverride.whileTrue(new TurretRight(m_turret));
 
     // Override to center the turret when B button is pressed
     final Trigger TurretCenterOverride = m_operatorController.b();
