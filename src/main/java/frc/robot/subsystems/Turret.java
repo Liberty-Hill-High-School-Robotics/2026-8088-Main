@@ -34,7 +34,16 @@ public class Turret extends SubsystemBase {
   private Field2d turretField = new Field2d();
   private Field2d targetField = new Field2d();
 
-  double angleToTargetRotations;
+  private double driveX;
+  private double driveY;
+  private double driveOm;
+
+  private double turretX;
+  private double turretY;
+  private double turretOm;
+
+  private Pose2d hubSetpoint;
+  private Pose2d turretPose;
 
   public Turret() {
     // config motor settings here
@@ -65,6 +74,12 @@ public class Turret extends SubsystemBase {
         .allowedProfileError(MotorSpeeds.kTurretError);
 
     turretPivot.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+
+    if (DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue) {
+      hubSetpoint = FieldConstants.kBlueHubPose;
+    } else {
+      hubSetpoint = FieldConstants.kRedHubPose;
+    }
   }
 
   @Override
@@ -85,25 +100,98 @@ public class Turret extends SubsystemBase {
       turretPivot.getEncoder().setPosition(Constants.kTurretForwardLimit);
     }
 
-    Pose2d setpoint;
-    if (DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue) {
-      setpoint = FieldConstants.kBlueHubPose;
-    } else {
-      setpoint = FieldConstants.kRedHubPose;
-    }
     // get position of the robot
-    double driveX = SmartDashboard.getNumber("Drive X", 0);
-    double driveY = SmartDashboard.getNumber("Drive Y", 0);
-    double driveOm = SmartDashboard.getNumber("Drive Om", 0);
+    driveX = SmartDashboard.getNumber("Drive X", 0);
+    driveY = SmartDashboard.getNumber("Drive Y", 0);
+    driveOm = SmartDashboard.getNumber("Drive Om", 0);
 
-    double turretX = Math.cos(Units.degreesToRadians(driveOm)) * Constants.kTurretXOffset + driveX;
-    double turretY = Math.sin(Units.degreesToRadians(driveOm)) * Constants.kTurretXOffset + driveY;
-    double turretOm = getTurretFieldAngleDegrees(driveOm);
+    // calculate the position of the turret based on the robot position and angle
+    turretX = Math.cos(Units.degreesToRadians(driveOm)) * Constants.kTurretXOffset + driveX;
+    turretY = Math.sin(Units.degreesToRadians(driveOm)) * Constants.kTurretXOffset + driveY;
+    turretOm = getTurretFieldAngleDegrees(driveOm);
 
-    Pose2d turretPose = new Pose2d(turretX, turretY, Rotation2d.fromDegrees(turretOm));
+    turretPose = new Pose2d(turretX, turretY, Rotation2d.fromDegrees(turretOm));
+  }
 
-    double x = setpoint.getX();
-    double y = setpoint.getY();
+  @Override
+  public void simulationPeriodic() {
+    // This method will be called once per scheduler run when in simulation
+    // Mostly used for debug and such
+  }
+
+  // Put methods for controlling this subsystem
+  // here. Call these from Commands.
+  // Should include run/stop/run back, etc.
+
+  // as well as check for limits and reset encoders,
+  // return true/false if limit is true, or encoder >= x value
+
+  // Point the turret at a specific point on the field
+  public void turretAirMail() {
+
+    Pose2d airMailSetpoint;
+    if (DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue) {
+      if (turretY < hubSetpoint.getY()) { // if turret is below hub
+        airMailSetpoint = FieldConstants.kBlueLowAirMail;
+      } else {
+        airMailSetpoint = FieldConstants.kBlueTopAirMail;
+      }
+    } else {
+      if (turretY < hubSetpoint.getY()) { // if turret is below hub
+        airMailSetpoint = FieldConstants.kRedLowAirMail;
+      } else {
+        airMailSetpoint = FieldConstants.kRedTopAirMail;
+      }
+    }
+
+    double x = airMailSetpoint.getX();
+    double y = airMailSetpoint.getY();
+
+    double robotToTargetY = 0;
+    double robotToTargetX = 0;
+    double angleToTarget = 0;
+
+    if (turretY < hubSetpoint.getY()) { // if turret is below hub
+      robotToTargetY = y - turretY;
+      robotToTargetX = x - turretX;
+      angleToTarget = Units.radiansToDegrees(Math.atan2(robotToTargetY, robotToTargetX));
+    } else {
+      robotToTargetY = turretY - y;
+      robotToTargetX = turretX - x;
+      angleToTarget = Units.radiansToDegrees(Math.atan2(robotToTargetY, robotToTargetX)) - 180;
+    }
+
+    double robotToTarget = Math.hypot(robotToTargetX, robotToTargetY);
+
+    SmartDashboard.putNumber("Turret Distance to Target", robotToTarget);
+
+    double angleToTargetRotations = getTargetAngleRotations(driveOm, angleToTarget);
+
+    SmartDashboard.putNumber("Turret Angle to Target Rotations", angleToTargetRotations);
+
+    turretField.setRobotPose(turretPose);
+    SmartDashboard.putData(
+        "Turret Pose", turretField); // Use to display turret on field for testing
+    targetField.setRobotPose(airMailSetpoint);
+    SmartDashboard.putData("Turret Target", targetField);
+
+    // https://docs.revrobotics.com/revlib/spark/closed-loop/maxmotion-position-control
+    turretController.setSetpoint(
+        angleToTargetRotations, SparkBase.ControlType.kMAXMotionPositionControl);
+
+    if (angleToTargetRotations + Constants.kTurretAllowedError
+            < turretPivot.getEncoder().getPosition()
+        && angleToTargetRotations - Constants.kTurretAllowedError
+            > turretPivot.getEncoder().getPosition()) {
+      SmartDashboard.putBoolean("Turret On Target", true);
+    } else {
+      SmartDashboard.putBoolean("Turret On Target", false);
+    }
+  }
+
+  public void turretPointAtHub() {
+    double x = hubSetpoint.getX();
+    double y = hubSetpoint.getY();
 
     double robotToTargetY = 0;
     double robotToTargetX = 0;
@@ -121,47 +209,30 @@ public class Turret extends SubsystemBase {
 
     double robotToTarget = Math.hypot(robotToTargetX, robotToTargetY);
 
-    SmartDashboard.putNumber("Robot to Target X", robotToTargetX);
-    SmartDashboard.putNumber("Robot to Target Y", robotToTargetY);
-    SmartDashboard.putNumber("Turret Angle to Target", angleToTarget);
     SmartDashboard.putNumber("Turret Distance to Target", robotToTarget);
 
-    angleToTargetRotations = getTargetAngleRotations(driveOm, angleToTarget);
+    double angleToTargetRotations = getTargetAngleRotations(driveOm, angleToTarget);
 
     SmartDashboard.putNumber("Turret Angle to Target Rotations", angleToTargetRotations);
 
     turretField.setRobotPose(turretPose);
     SmartDashboard.putData(
         "Turret Pose", turretField); // Use to display turret on field for testing
-    targetField.setRobotPose(setpoint);
+    targetField.setRobotPose(hubSetpoint);
     SmartDashboard.putData("Turret Target", targetField);
+
+    // https://docs.revrobotics.com/revlib/spark/closed-loop/maxmotion-position-control
+    turretController.setSetpoint(
+        angleToTargetRotations, SparkBase.ControlType.kMAXMotionPositionControl);
 
     if (angleToTargetRotations + Constants.kTurretAllowedError
             < turretPivot.getEncoder().getPosition()
         && angleToTargetRotations - Constants.kTurretAllowedError
             > turretPivot.getEncoder().getPosition()) {
       SmartDashboard.putBoolean("Turret On Target", true);
+    } else {
+      SmartDashboard.putBoolean("Turret On Target", false);
     }
-  }
-
-  @Override
-  public void simulationPeriodic() {
-    // This method will be called once per scheduler run when in simulation
-    // Mostly used for debug and such
-  }
-
-  // Put methods for controlling this subsystem
-  // here. Call these from Commands.
-  // Should include run/stop/run back, etc.
-
-  // as well as check for limits and reset encoders,
-  // return true/false if limit is true, or encoder >= x value
-
-  // Point the turret at a specific point on the field
-  public void TurretPointAtHub() {
-    // https://docs.revrobotics.com/revlib/spark/closed-loop/maxmotion-position-control
-    turretController.setSetpoint(
-        angleToTargetRotations, SparkBase.ControlType.kMAXMotionPositionControl);
   }
 
   public void turretStop() {

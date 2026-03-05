@@ -83,7 +83,8 @@ public class Vision extends SubsystemBase {
     // Object Detection
     for (PhotonPipelineResult result : OBJCam.getAllUnreadResults()) {
       if (result.hasTargets()) {
-        PhotonTrackedTarget tgt = result.getBestTarget(); // get the target that takes up most area, typically the closest
+        PhotonTrackedTarget tgt =
+            result.getBestTarget(); // get the target that takes up most area, typically the closest
         objYaw = tgt.getYaw();
         SmartDashboard.putBoolean("FUEL", true);
         SmartDashboard.putNumber("objYaw", objYaw);

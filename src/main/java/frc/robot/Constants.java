@@ -178,5 +178,15 @@ public final class Constants {
 
     public static final Pose2d kRedHubPose =
         new Pose2d(Units.inchesToMeters(468.56), Units.inchesToMeters(158.32), new Rotation2d());
+
+    public static final Pose2d kRedTopAirMail =
+        new Pose2d(Units.inchesToMeters(559.34), Units.inchesToMeters(237.48), new Rotation2d());
+    public static final Pose2d kRedLowAirMail =
+        new Pose2d(Units.inchesToMeters(559.34), Units.inchesToMeters(79.16), new Rotation2d());
+
+    public static final Pose2d kBlueTopAirMail =
+        new Pose2d(Units.inchesToMeters(90.78), Units.inchesToMeters(237.48), new Rotation2d());
+    public static final Pose2d kBlueLowAirMail =
+        new Pose2d(Units.inchesToMeters(90.78), Units.inchesToMeters(79.16), new Rotation2d());
   }
 }

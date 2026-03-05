@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.OIConstants;
+import frc.robot.commands.AirMail;
 import frc.robot.commands.BallEject;
 import frc.robot.commands.BallToHopper;
 import frc.robot.commands.DetectAndIntake;
@@ -215,8 +216,8 @@ public class RobotContainer {
     ShootInHub.toggleOnTrue(new ShootInHub(m_intake, m_turret, m_shooter, m_hopper));
 
     // Shoots balls into Aliance Zone when Left Bumper is pressed
-    // final Trigger AirMail = m_operatorController.rightBumper();
-    // AirMail.toggleOnTrue(new ShootInHub(m_intake, m_turret, m_shooter, m_hopper));
+    final Trigger AirMail = m_operatorController.leftBumper();
+    AirMail.toggleOnTrue(new AirMail(m_intake, m_turret, m_shooter, m_hopper));
 
     // Ejects balls out of the robot while Y button is held
     final Trigger Eject = m_operatorController.y();
