@@ -23,7 +23,7 @@ public class DetectAndIntake extends ParallelCommandGroup {
             m_drive,
             () -> 0.5,
             () -> 0.0,
-            () -> targetPID.calculate(0, SmartDashboard.getNumber("objYaw", 0))));
+            () -> -targetPID.calculate(0, SmartDashboard.getNumber("objYaw", 0))));
     targetPID.close();
   }
 

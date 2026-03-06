@@ -37,7 +37,7 @@ public final class Constants {
   public static final Mode currentMode = RobotBase.isReal() ? Mode.REAL : simMode;
 
   public static final double kTurretXOffset = Units.inchesToMeters(3.78230505);
-  public static final double kTurretYOffset = 0;
+  public static final double kTurretYOffset = Units.inchesToMeters(0);
 
   public static final double kTurretMaxAngle =
       270.0; // TODO: get a real number from physical turret

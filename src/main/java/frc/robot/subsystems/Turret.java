@@ -108,6 +108,8 @@ public class Turret extends SubsystemBase {
     // calculate the position of the turret based on the robot position and angle
     turretX = Math.cos(Units.degreesToRadians(driveOm)) * Constants.kTurretXOffset + driveX;
     turretY = Math.sin(Units.degreesToRadians(driveOm)) * Constants.kTurretXOffset + driveY;
+    turretX = -Math.sin(Units.degreesToRadians(driveOm)) * Constants.kTurretYOffset + driveX;
+    turretY = -Math.cos(Units.degreesToRadians(driveOm)) * Constants.kTurretYOffset + driveY;
     turretOm = getTurretFieldAngleDegrees(driveOm);
 
     turretPose = new Pose2d(turretX, turretY, Rotation2d.fromDegrees(turretOm));

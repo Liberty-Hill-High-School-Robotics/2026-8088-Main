@@ -64,7 +64,7 @@ public class RobotContainer {
 
   private final CommandXboxController m_operatorController =
       new CommandXboxController(
-          OIConstants.kOperatorControllerPort); // TODO: ask driver what controller they want
+          OIConstants.kOperatorControllerPort);
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -160,9 +160,9 @@ public class RobotContainer {
     m_drive.setDefaultCommand(
         DriveCommands.joystickDrive(
             m_drive,
-            () -> m_driverController.getLeftY(),
-            () -> m_driverController.getLeftX(),
-            () -> m_driverController.getRightX()));
+            () -> -m_driverController.getLeftY(),
+            () -> -m_driverController.getLeftX(),
+            () -> -m_driverController.getRightX()));
 
     // add button bindings here
     /*
