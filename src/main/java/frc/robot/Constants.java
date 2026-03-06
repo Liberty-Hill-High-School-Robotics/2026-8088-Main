@@ -85,14 +85,15 @@ public final class Constants {
 
     // Shooter
     public static final int kShooterMotor = 13;
+    public static final int kShooterBackMotor = 14;
 
     // Hopper
-    public static final int kHopperMotor = 14;
+    public static final int kHopperMotor = 15;
 
     // Climber
     // TODO: figure out new climber design
-    public static final int kLiftMotor = 15;
-    public static final int kPiviotMotor = 16;
+    public static final int kLiftMotor = 16;
+    public static final int kPiviotMotor = 17;
   }
 
   public static final class MotorSpeeds {
@@ -175,7 +176,6 @@ public final class Constants {
   public static final class FieldConstants {
     public static final Pose2d kBlueHubPose =
         new Pose2d(Units.inchesToMeters(181.56), Units.inchesToMeters(158.32), new Rotation2d());
-
     public static final Pose2d kRedHubPose =
         new Pose2d(Units.inchesToMeters(468.56), Units.inchesToMeters(158.32), new Rotation2d());
 
