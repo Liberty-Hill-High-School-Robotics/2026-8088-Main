@@ -1,6 +1,5 @@
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import frc.robot.commands.Shooter.ShootAtSpeed;
 import frc.robot.commands.Turret.TurretPointAtHub;
@@ -21,7 +20,7 @@ public class ShootInHub extends ParallelCommandGroup {
     addCommands(
         new BallToShoot(m_intake, m_hopper),
         new TurretPointAtHub(m_turret),
-        new ShootAtSpeed(m_shooter, SmartDashboard.getNumber("Turret Distance to Target", 0)));
+        new ShootAtSpeed(m_shooter));
   }
 
   @Override

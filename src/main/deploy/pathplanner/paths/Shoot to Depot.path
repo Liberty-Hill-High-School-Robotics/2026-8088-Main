@@ -4,12 +4,12 @@
     {
       "anchor": {
         "x": 3.5,
-        "y": 7.26
+        "y": 7.41
       },
       "prevControl": null,
       "nextControl": {
         "x": 3.5,
-        "y": 6.26
+        "y": 6.41
       },
       "isLocked": false,
       "linkedName": "Shoot Top"

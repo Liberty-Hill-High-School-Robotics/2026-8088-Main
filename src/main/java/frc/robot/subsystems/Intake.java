@@ -19,6 +19,7 @@ public class Intake extends SubsystemBase {
     intakeMotor = new SparkFlex(CanIDs.kIntakeMotor, MotorType.kBrushless);
     indexMotor = new SparkFlex(CanIDs.kIndexMotor, MotorType.kBrushless);
     // Put smartdashboard stuff, check for limit switches
+
   }
 
   @Override

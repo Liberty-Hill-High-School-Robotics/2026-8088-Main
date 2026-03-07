@@ -1,6 +1,5 @@
 package frc.robot.subsystems;
 
-// all imports here
 import com.revrobotics.PersistMode;
 import com.revrobotics.ResetMode;
 import com.revrobotics.spark.FeedbackSensor;
@@ -10,6 +9,7 @@ import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLimitSwitch;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkMaxConfig;
+// all imports here
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
@@ -22,6 +22,7 @@ import frc.robot.Constants;
 import frc.robot.Constants.CanIDs;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.MotorSpeeds;
+import org.littletonrobotics.junction.Logger;
 
 public class Turret extends SubsystemBase {
   // motors & variables here, define them and create any PIDs needed
@@ -113,6 +114,16 @@ public class Turret extends SubsystemBase {
     turretOm = getTurretFieldAngleDegrees(driveOm);
 
     turretPose = new Pose2d(turretX, turretY, Rotation2d.fromDegrees(turretOm));
+
+    Logger.recordOutput("Turret/Postion", turretPivot.getEncoder().getPosition(), "rotations");
+    Logger.recordOutput(
+        "Turret/Setpoint", turretController.getMAXMotionSetpointPosition(), "rotations");
+    Logger.recordOutput("Turret/Velocity", turretPivot.getEncoder().getPosition(), "rpm");
+    Logger.recordOutput(
+        "Turret/VelocitySetpoint", turretController.getMAXMotionSetpointVelocity(), "rpm");
+    Logger.recordOutput("Turret/ForwardLimit", turretForwardLimit.isPressed());
+    Logger.recordOutput("Turret/ReverseLimit", turretReverseLimitSwitch.isPressed());
+    Logger.recordOutput("Turret/Pose", turretPose);
   }
 
   @Override
@@ -186,8 +197,10 @@ public class Turret extends SubsystemBase {
         && angleToTargetRotations - Constants.kTurretAllowedError
             > turretPivot.getEncoder().getPosition()) {
       SmartDashboard.putBoolean("Turret On Target", true);
+      Logger.recordOutput("Turret/OnTarget", true);
     } else {
       SmartDashboard.putBoolean("Turret On Target", false);
+      Logger.recordOutput("Turret/OnTarget", false);
     }
   }
 

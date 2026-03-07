@@ -8,12 +8,12 @@ import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkFlexConfig;
-
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 // all imports here
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.CanIDs;
 import frc.robot.Constants.MotorSpeeds;
+import org.littletonrobotics.junction.Logger;
 
 public class Shooter extends SubsystemBase {
 
@@ -38,6 +38,7 @@ public class Shooter extends SubsystemBase {
         .kS(MotorSpeeds.kShooterS)
         .kV(MotorSpeeds.kShooterV)
         .kA(MotorSpeeds.kShooterA);
+    config.inverted(true);
     shooterMotor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
     shooterBackMotor = new SparkFlex(CanIDs.kShooterBackMotor, MotorType.kBrushless);
@@ -62,6 +63,15 @@ public class Shooter extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     // Put smartdashboard stuff, check for limit switches
+    Logger.recordOutput(
+        "Shooter/ShooterFront/ShooterActual", shooterMotor.getEncoder().getVelocity(), "rpm");
+    Logger.recordOutput(
+        "Shooter/ShooterFront/ShooterSetpoint", shooterController.getSetpoint(), "rpm");
+    Logger.recordOutput(
+        "Shooter/ShooterBack/ShooterActual", shooterBackMotor.getEncoder().getVelocity(), "rpm");
+    Logger.recordOutput(
+        "Shooter/ShooterBack/ShooterSetpoint", shooterBackController.getSetpoint(), "rpm");
+
     SmartDashboard.putNumber("Shooter Actual", shooterMotor.getEncoder().getVelocity());
     SmartDashboard.putNumber("Shooter Back Actual", shooterBackMotor.getEncoder().getVelocity());
   }
@@ -79,18 +89,22 @@ public class Shooter extends SubsystemBase {
   // as well as check for limits and reset encoders,
   // return true/false if limit is true, or encoder >= x value
 
-  public void shootAtSpeed(double distance) {
-    double setpoint = distance; // TODO: Equation to convert distance to velocity goes here
-    double shooterBackingRatio = 1.0; // TODO: Equation to convert distance to backing
+  public void shootAtSpeed() {
+    double distance = SmartDashboard.getNumber("Turret Distance to Target", 0);
+    double setpoint = 179.836 + (595.497 * distance) + (264.868 * Math.pow(distance, 2));
+    double shooterBackingRatio =
+        4.5667
+            - (2.51262 * distance)
+            + (0.332342 * Math.pow(distance, 2)); // TODO: Equation for backing need to be re-done
+    setpoint = Math.min(setpoint, 6500);
+    double backSetpoint = Math.min(shooterBackingRatio * setpoint, 6500);
     SmartDashboard.putNumber("Shooter Setpoint", setpoint);
-    if (SmartDashboard.getBoolean("Turret On Target", true)) {
-      shooterController.setSetpoint(setpoint, ControlType.kVelocity);
-      shooterBackController.setSetpoint(setpoint * shooterBackingRatio, ControlType.kVelocity);
-    }
-    
+    shooterController.setSetpoint(setpoint, ControlType.kVelocity);
+    shooterBackController.setSetpoint(backSetpoint, ControlType.kVelocity);
   }
 
   public void shooterStop() {
     shooterMotor.set(0);
+    shooterBackMotor.set(0);
   }
 }

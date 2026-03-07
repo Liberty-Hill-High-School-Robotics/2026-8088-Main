@@ -5,7 +5,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import frc.robot.subsystems.Hopper;
 import frc.robot.subsystems.Intake;
-import frc.robot.subsystems.Vision;
 import frc.robot.subsystems.drive.Drive;
 
 /**
@@ -15,7 +14,7 @@ import frc.robot.subsystems.drive.Drive;
  */
 public class DetectAndIntake extends ParallelCommandGroup {
 
-  public DetectAndIntake(Vision m_vision, Drive m_drive, Intake m_intake, Hopper m_hopper) {
+  public DetectAndIntake(Drive m_drive, Intake m_intake, Hopper m_hopper) {
     PIDController targetPID = new PIDController(.02, 0, 0);
     addCommands(
         new BallToHopper(m_intake, m_hopper),

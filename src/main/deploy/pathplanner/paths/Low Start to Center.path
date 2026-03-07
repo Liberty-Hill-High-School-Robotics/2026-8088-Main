@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.46,
-        "y": 0.7999999999999998
+        "x": 5.325651689410041,
+        "y": 0.6269928490491072
       },
       "isLocked": false,
       "linkedName": "Start Low"
@@ -17,15 +17,15 @@
     {
       "anchor": {
         "x": 5.6,
-        "y": 0.8
+        "y": 0.6
       },
       "prevControl": {
-        "x": 5.17405424133051,
-        "y": 0.8
+        "x": 5.170520824231462,
+        "y": 0.4654066102731822
       },
       "nextControl": {
-        "x": 6.025945758669489,
-        "y": 0.8
+        "x": 5.846973839038793,
+        "y": 0.6773985050860568
       },
       "isLocked": false,
       "linkedName": "Trench Point Low"
@@ -36,8 +36,8 @@
         "y": 1.75
       },
       "prevControl": {
-        "x": 6.757893218813452,
-        "y": 1.0428932188134525
+        "x": 6.935860023724794,
+        "y": 1.2107117437722423
       },
       "nextControl": null,
       "isLocked": false,
@@ -46,7 +46,7 @@
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 1.0,
+      "waypointRelativePos": 0.2,
       "rotationDegrees": 180.0
     }
   ],
