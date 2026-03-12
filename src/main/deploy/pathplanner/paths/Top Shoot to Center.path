@@ -3,32 +3,37 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.5,
-        "y": 7.41
+        "x": 3.0,
+        "y": 6.33
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.5,
-        "y": 6.41
+        "x": 2.5138315539739033,
+        "y": 7.472562277580071
       },
       "isLocked": false,
       "linkedName": "Shoot Top"
     },
     {
       "anchor": {
-        "x": 0.46958481613285974,
-        "y": 5.977034400948992
+        "x": 7.465,
+        "y": 6.275
       },
       "prevControl": {
-        "x": 3.4695848161328593,
-        "y": 5.977034400948992
+        "x": 6.236512455516015,
+        "y": 8.311779359430604
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Depot"
+      "linkedName": "Center Top"
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.35,
+      "rotationDegrees": 0.0
+    }
+  ],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [],
@@ -42,13 +47,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 180.0
+    "rotation": -45.0
   },
   "reversed": false,
   "folder": "For Top Auton",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": -53.71807194538574
   },
   "useDefaultConstraints": true
 }

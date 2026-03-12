@@ -17,27 +17,27 @@
     {
       "anchor": {
         "x": 5.6,
-        "y": 0.6
+        "y": 0.65
       },
       "prevControl": {
         "x": 5.85,
-        "y": 0.6
+        "y": 0.65
       },
       "nextControl": {
         "x": 5.35,
-        "y": 0.6
+        "y": 0.65
       },
       "isLocked": false,
       "linkedName": "Trench Point Low"
     },
     {
       "anchor": {
-        "x": 3.5,
-        "y": 0.6
+        "x": 3.0,
+        "y": 1.73
       },
       "prevControl": {
-        "x": 4.5,
-        "y": 0.5999999999999999
+        "x": 2.373060763473189,
+        "y": 0.0074986042724656254
       },
       "nextControl": null,
       "isLocked": false,
@@ -46,7 +46,11 @@
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 1,
+      "waypointRelativePos": 1.0,
+      "rotationDegrees": 0.0
+    },
+    {
+      "waypointRelativePos": 1.5381882770870354,
       "rotationDegrees": 0.0
     }
   ],
@@ -63,7 +67,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": 59.776751845685396
   },
   "reversed": false,
   "folder": "For Low Auton",

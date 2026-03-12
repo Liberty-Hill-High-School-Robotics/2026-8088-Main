@@ -3,16 +3,16 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.0,
-        "y": 1.73
+        "x": 2.5,
+        "y": 4.0
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.0,
-        "y": 2.73
+        "x": 3.122028469750891,
+        "y": 5.084021352313167
       },
       "isLocked": false,
-      "linkedName": "Shoot Low"
+      "linkedName": "Shoot Mid"
     },
     {
       "anchor": {
@@ -20,7 +20,7 @@
         "y": 5.977034400948992
       },
       "prevControl": {
-        "x": 3.2195848161328597,
+        "x": 3.4695848161328597,
         "y": 5.977034400948992
       },
       "nextControl": null,
@@ -45,10 +45,10 @@
     "rotation": 180.0
   },
   "reversed": false,
-  "folder": "For Low Auton",
+  "folder": "For Mid Auton",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 59.776751845685396
+    "rotation": 0.0
   },
   "useDefaultConstraints": true
 }

@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Top Start to Shoot"
+            "pathName": "Mid Start To Shoot"
           }
         },
         {
@@ -28,36 +28,11 @@
               }
             ]
           }
-        },
-        {
-          "type": "parallel",
-          "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "Top Shoot to Center"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Top Center to Shoot"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "ShootInHub"
-          }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": "2",
+  "folder": "1",
   "choreoAuto": false
 }

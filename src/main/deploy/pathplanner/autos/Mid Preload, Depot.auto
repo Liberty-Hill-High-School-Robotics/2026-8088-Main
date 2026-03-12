@@ -5,9 +5,15 @@
     "data": {
       "commands": [
         {
+          "type": "named",
+          "data": {
+            "name": "InitilizeTurretLeft"
+          }
+        },
+        {
           "type": "path",
           "data": {
-            "pathName": "Low Start to Shoot"
+            "pathName": "Mid Start To Shoot"
           }
         },
         {
@@ -30,15 +36,22 @@
           }
         },
         {
-          "type": "path",
+          "type": "parallel",
           "data": {
-            "pathName": "Low Shoot to Center"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Mid Shoot to Depot"
+                }
+              }
+            ]
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Low Center to Shoot"
+            "pathName": "Mid Depot to Shoot"
           }
         },
         {

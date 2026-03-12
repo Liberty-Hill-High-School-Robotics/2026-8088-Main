@@ -3,9 +3,11 @@ package frc.robot.subsystems;
 // all imports here
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.CanIDs;
 import frc.robot.Constants.MotorSpeeds;
+import org.littletonrobotics.junction.Logger;
 
 public class Intake extends SubsystemBase {
 
@@ -18,8 +20,15 @@ public class Intake extends SubsystemBase {
     // config motor settings here
     intakeMotor = new SparkFlex(CanIDs.kIntakeMotor, MotorType.kBrushless);
     indexMotor = new SparkFlex(CanIDs.kIndexMotor, MotorType.kBrushless);
+  }
+
+  @Override
+  public void periodic() {
+    // This method will be called once per scheduler run
     // Put smartdashboard stuff, check for limit switches
 
+    SmartDashboard.putNumber("IndexSpeed", indexMotor.getEncoder().getVelocity());
+    Logger.recordOutput("Intake/Index/IndexSpeed", indexMotor.getEncoder().getVelocity(), "rpm");
   }
 
   @Override

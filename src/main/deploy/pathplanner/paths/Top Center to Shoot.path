@@ -32,12 +32,12 @@
     },
     {
       "anchor": {
-        "x": 3.5,
-        "y": 7.4
+        "x": 3.0,
+        "y": 6.33
       },
       "prevControl": {
-        "x": 3.75,
-        "y": 7.4
+        "x": 1.5670225385527887,
+        "y": 7.763060498220641
       },
       "nextControl": null,
       "isLocked": false,
@@ -63,7 +63,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": -53.71807194538574
   },
   "reversed": false,
   "folder": "For Top Auton",

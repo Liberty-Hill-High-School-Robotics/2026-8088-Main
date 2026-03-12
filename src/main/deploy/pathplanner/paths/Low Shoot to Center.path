@@ -8,46 +8,34 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.7739620403321474,
-        "y": 0.12403321470937057
+        "x": 2.0296678529062877,
+        "y": 0.03795966785290683
       },
       "isLocked": false,
       "linkedName": "Shoot Low"
     },
     {
       "anchor": {
-        "x": 5.6,
-        "y": 0.65
+        "x": 7.465,
+        "y": 1.75
       },
       "prevControl": {
-        "x": 5.348873844007498,
-        "y": 0.6309114358860582
-      },
-      "nextControl": {
-        "x": 5.956197882437815,
-        "y": 0.6770752605967797
-      },
-      "isLocked": false,
-      "linkedName": "Trench Point Low"
-    },
-    {
-      "anchor": {
-        "x": 8.0,
-        "y": 3.0
-      },
-      "prevControl": {
-        "x": 7.444092208319066,
-        "y": 2.5315629536942303
+        "x": 7.484578884934758,
+        "y": 0.19934756820877886
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Center^2 Low"
+      "linkedName": "Center Low"
     }
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 0.6,
-      "rotationDegrees": 1.0
+      "waypointRelativePos": 0.2575488454706925,
+      "rotationDegrees": 0.0
+    },
+    {
+      "waypointRelativePos": 0.6714031971580797,
+      "rotationDegrees": 0.0
     }
   ],
   "constraintZones": [],

@@ -3,53 +3,32 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 8.0,
-        "y": 3.0
+        "x": 0.46958481613285974,
+        "y": 5.977034400948992
       },
       "prevControl": null,
       "nextControl": {
-        "x": 7.500000000000001,
-        "y": 2.1339745962155625
+        "x": 1.8459542628203944,
+        "y": 5.421083709299128
       },
       "isLocked": false,
-      "linkedName": "Center^2 Low"
-    },
-    {
-      "anchor": {
-        "x": 5.6,
-        "y": 0.65
-      },
-      "prevControl": {
-        "x": 6.1,
-        "y": 0.65
-      },
-      "nextControl": {
-        "x": 5.35,
-        "y": 0.65
-      },
-      "isLocked": false,
-      "linkedName": "Trench Point Low"
+      "linkedName": "Depot"
     },
     {
       "anchor": {
         "x": 3.0,
-        "y": 1.73
+        "y": 6.33
       },
       "prevControl": {
-        "x": 2.482811387900357,
-        "y": 0.18858837485171875
+        "x": 1.8837871491373996,
+        "y": 6.036797306511616
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Shoot Low"
+      "linkedName": "Shoot Top"
     }
   ],
-  "rotationTargets": [
-    {
-      "waypointRelativePos": 1,
-      "rotationDegrees": 0.0
-    }
-  ],
+  "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [],
@@ -63,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 59.776751845685396
+    "rotation": -53.71807194538574
   },
   "reversed": false,
-  "folder": "For Low Auton",
+  "folder": "For Top Auton",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 45.0
+    "rotation": 180.0
   },
   "useDefaultConstraints": true
 }

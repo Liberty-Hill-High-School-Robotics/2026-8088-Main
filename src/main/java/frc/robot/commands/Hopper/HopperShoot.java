@@ -1,20 +1,20 @@
-package frc.robot.commands.Turret;
+package frc.robot.commands.Hopper;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.Turret;
+import frc.robot.subsystems.Hopper;
 
 /**
  * A simple command that grabs a hatch with the {@link HatchSubsystem}. Written explicitly for
  * pedagogical purposes. Actual code should inline a command this simple with {@link
  * edu.wpi.first.wpilibj2.command.InstantCommand}.
  */
-public class TurretLeft extends Command {
+public class HopperShoot extends Command {
   // The subsystem the command runs on
-  private final Turret m_turret;
+  private final Hopper m_hopper;
 
-  public TurretLeft(Turret subsystem) {
-    m_turret = subsystem;
-    addRequirements(m_turret);
+  public HopperShoot(Hopper subsystem) {
+    m_hopper = subsystem;
+    addRequirements(m_hopper);
   }
 
   @Override
@@ -22,16 +22,16 @@ public class TurretLeft extends Command {
 
   @Override
   public void execute() {
-    m_turret.turretLeft();
+    m_hopper.hopperShoot();
   }
 
   @Override
   public void end(boolean interrupted) {
-    m_turret.turretStop();
+    m_hopper.hopperStop();
   }
 
   @Override
   public boolean isFinished() {
-    return m_turret.getTurretReverseLimit();
+    return false;
   }
 }

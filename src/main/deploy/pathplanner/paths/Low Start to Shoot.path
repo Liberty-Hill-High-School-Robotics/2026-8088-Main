@@ -3,53 +3,32 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 4.46,
-        "y": 0.8
+        "x": 3.6,
+        "y": 1.73
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.325651689410041,
-        "y": 0.6269928490491072
+        "x": 3.1721616184170722,
+        "y": 1.872286292348241
       },
       "isLocked": false,
       "linkedName": "Start Low"
     },
     {
       "anchor": {
-        "x": 5.6,
-        "y": 0.6
+        "x": 3.0,
+        "y": 1.73
       },
       "prevControl": {
-        "x": 5.170520824231462,
-        "y": 0.4654066102731822
-      },
-      "nextControl": {
-        "x": 5.846973839038793,
-        "y": 0.6773985050860568
-      },
-      "isLocked": false,
-      "linkedName": "Trench Point Low"
-    },
-    {
-      "anchor": {
-        "x": 7.465,
-        "y": 1.75
-      },
-      "prevControl": {
-        "x": 6.935860023724794,
-        "y": 1.2107117437722423
+        "x": 3.1973416685983587,
+        "y": 1.5568378128395282
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Center Low"
+      "linkedName": "Shoot Low"
     }
   ],
-  "rotationTargets": [
-    {
-      "waypointRelativePos": 0.2,
-      "rotationDegrees": 180.0
-    }
-  ],
+  "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [],
@@ -63,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 45.0
+    "rotation": 59.776751845685396
   },
   "reversed": false,
   "folder": "For Low Auton",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 180.0
+    "rotation": 0.0
   },
   "useDefaultConstraints": true
 }

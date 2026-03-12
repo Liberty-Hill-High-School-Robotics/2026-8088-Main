@@ -39,6 +39,8 @@ public final class Constants {
   public static final double kTurretXOffset = Units.inchesToMeters(3.78230505);
   public static final double kTurretYOffset = Units.inchesToMeters(0);
 
+  public static final double kDriveShootingRatio = 0.5;
+
   public static final double kTurretMaxAngle =
       270.0; // TODO: get a real number from physical turret
   public static final double kTurretForwardLimit =
@@ -49,6 +51,9 @@ public final class Constants {
 
   public static final double kFallBackDistance =
       2; // TODO: find a consistant distance to fall back on if vision is not working
+
+  public static final double kTimingOffset =
+      2.0; // TODO: find how long to shoot before the ball reaches the hub
 
   public static enum Mode {
     /** Running on a real robot. */
@@ -82,6 +87,8 @@ public final class Constants {
 
     // Turret
     public static final int kTurretPivot = 12;
+    public static final int kTurretForwardLimitDIO = 9;
+    public static final int kTurretReverseLimitDIO = 0;
 
     // Shooter
     public static final int kShooterMotor = 13;
@@ -99,10 +106,10 @@ public final class Constants {
   public static final class MotorSpeeds {
 
     // Hopper speeds
-    public static final double kHopperSpeed = 0.25;
+    public static final double kHopperSpeed = 0.4;
 
     // Intake speeds
-    public static final double kIntakeSpeed = .5;
+    public static final double kIntakeSpeed = .35;
 
     // Turret gains
     public static final double kTurretP = 0.0;

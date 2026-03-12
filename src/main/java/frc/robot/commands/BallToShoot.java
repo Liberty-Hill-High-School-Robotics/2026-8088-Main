@@ -1,7 +1,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-import frc.robot.commands.Hopper.HopperOut;
+import frc.robot.commands.Hopper.HopperShoot;
 import frc.robot.commands.Intake.IntakeUp;
 import frc.robot.subsystems.Hopper;
 import frc.robot.subsystems.Intake;
@@ -15,7 +15,7 @@ public class BallToShoot extends ParallelCommandGroup {
 
   public BallToShoot(Intake m_intake, Hopper m_hopper) {
 
-    addCommands(new IntakeUp(m_intake), new HopperOut(m_hopper));
+    addCommands(new IntakeUp(m_intake), new HopperShoot(m_hopper));
   }
 
   @Override

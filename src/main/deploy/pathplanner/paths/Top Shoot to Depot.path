@@ -4,15 +4,15 @@
     {
       "anchor": {
         "x": 3.0,
-        "y": 1.73
+        "y": 6.33
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.0,
-        "y": 2.73
+        "x": 2.7500364397874306,
+        "y": 6.334268321198936
       },
       "isLocked": false,
-      "linkedName": "Shoot Low"
+      "linkedName": "Shoot Top"
     },
     {
       "anchor": {
@@ -20,8 +20,8 @@
         "y": 5.977034400948992
       },
       "prevControl": {
-        "x": 3.2195848161328597,
-        "y": 5.977034400948992
+        "x": 2.427758007117439,
+        "y": 5.783368920521946
       },
       "nextControl": null,
       "isLocked": false,
@@ -45,10 +45,10 @@
     "rotation": 180.0
   },
   "reversed": false,
-  "folder": "For Low Auton",
+  "folder": "For Top Auton",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 59.776751845685396
+    "rotation": -53.71807194538574
   },
   "useDefaultConstraints": true
 }

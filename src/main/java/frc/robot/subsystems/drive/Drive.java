@@ -32,6 +32,7 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -41,6 +42,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
+import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.Mode;
 import frc.robot.util.LocalADStarAK;
 import java.util.concurrent.locks.Lock;
@@ -181,6 +183,9 @@ public class Drive extends SubsystemBase {
     SmartDashboard.putNumber("Drive X", getPose().getX());
     SmartDashboard.putNumber("Drive Y", getPose().getY());
     SmartDashboard.putNumber("Drive Om", getPose().getRotation().getDegrees());
+
+    getRobotToAirMailAngle();
+    getRobotToHubAngle();
   }
 
   /**
@@ -230,6 +235,109 @@ public class Drive extends SubsystemBase {
     }
     kinematics.resetHeadings(headings);
     stop();
+  }
+
+  public double getRobotToHubAngle() {
+    Pose2d hubSetpoint;
+    if (DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue) {
+      hubSetpoint = FieldConstants.kBlueHubPose;
+    } else {
+      hubSetpoint = FieldConstants.kRedHubPose;
+    }
+
+    double x = hubSetpoint.getX();
+    double y = hubSetpoint.getY();
+
+    double robotToTargetY = 0;
+    double robotToTargetX = 0;
+    double angleToTarget = 0;
+
+    if (getPose().getY() < y) {
+      robotToTargetY = y - getPose().getY();
+      robotToTargetX = x - getPose().getX();
+      angleToTarget = Units.radiansToDegrees(Math.atan2(robotToTargetY, robotToTargetX));
+    } else {
+      robotToTargetY = getPose().getY() - y;
+      robotToTargetX = getPose().getX() - x;
+      angleToTarget = Units.radiansToDegrees(Math.atan2(robotToTargetY, robotToTargetX)) - 180;
+    }
+
+    double robotToTarget = Math.hypot(robotToTargetX, robotToTargetY);
+    SmartDashboard.putNumber("Turret Distance to Target Hub", robotToTarget);
+    Logger.recordOutput("Drive/DistanceToTargetHub", robotToTarget, "meters");
+
+    SmartDashboard.putNumber("Robot Angle to Target Hub", angleToTarget);
+    Logger.recordOutput("Drive/AngleToTargetHub", angleToTarget, "degrees");
+
+    if (angleToTarget + Constants.kTurretAllowedError < getPose().getRotation().getDegrees()
+        && angleToTarget - Constants.kTurretAllowedError > getPose().getRotation().getDegrees()) {
+      SmartDashboard.putBoolean("Drive On Target Hub", true);
+      Logger.recordOutput("Drive/DriveOnTarget", true);
+    } else {
+      SmartDashboard.putBoolean("Drive On Target Hub", false);
+      Logger.recordOutput("Drive/DriveOnTargetHub", false);
+    }
+
+    return angleToTarget;
+  }
+
+  public double getRobotToAirMailAngle() {
+    Pose2d hubSetpoint;
+    if (DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue) {
+      hubSetpoint = FieldConstants.kBlueHubPose;
+    } else {
+      hubSetpoint = FieldConstants.kRedHubPose;
+    }
+
+    Pose2d airMailSetpoint;
+    if (DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue) {
+      if (getPose().getY() < hubSetpoint.getY()) { // if turret is below hub
+        airMailSetpoint = FieldConstants.kBlueLowAirMail;
+      } else {
+        airMailSetpoint = FieldConstants.kBlueTopAirMail;
+      }
+    } else {
+      if (getPose().getY() < hubSetpoint.getY()) { // if turret is below hub
+        airMailSetpoint = FieldConstants.kRedLowAirMail;
+      } else {
+        airMailSetpoint = FieldConstants.kRedTopAirMail;
+      }
+    }
+
+    double x = airMailSetpoint.getX();
+    double y = airMailSetpoint.getY();
+
+    double robotToTargetY = 0;
+    double robotToTargetX = 0;
+    double angleToTarget = 0;
+
+    if (getPose().getY() < hubSetpoint.getY()) { // if turret is below hub
+      robotToTargetY = y - getPose().getY();
+      robotToTargetX = x - getPose().getX();
+      angleToTarget = Units.radiansToDegrees(Math.atan2(robotToTargetY, robotToTargetX));
+    } else {
+      robotToTargetY = getPose().getY() - y;
+      robotToTargetX = getPose().getX() - x;
+      angleToTarget = Units.radiansToDegrees(Math.atan2(robotToTargetY, robotToTargetX)) - 180;
+    }
+
+    double robotToTarget = Math.hypot(robotToTargetX, robotToTargetY);
+    SmartDashboard.putNumber("Turret Distance to Target Mail", robotToTarget);
+    Logger.recordOutput("Drive/DistanceToTargetMail", robotToTarget, "meters");
+
+    SmartDashboard.putNumber("Robot Angle to Target Mail", angleToTarget);
+    Logger.recordOutput("Drive/AngleToTargetMail", angleToTarget, "degrees");
+
+    if (angleToTarget + Constants.kTurretAllowedError < getPose().getRotation().getDegrees()
+        && angleToTarget - Constants.kTurretAllowedError > getPose().getRotation().getDegrees()) {
+      SmartDashboard.putBoolean("Drive On Target Mail", true);
+      Logger.recordOutput("Drive/DriveOnTarget Mail", true);
+    } else {
+      SmartDashboard.putBoolean("Drive On Target Mail", false);
+      Logger.recordOutput("Drive/DriveOnTarget Mail", false);
+    }
+
+    return angleToTarget;
   }
 
   /** Returns a command to run a quasistatic test in the specified direction. */

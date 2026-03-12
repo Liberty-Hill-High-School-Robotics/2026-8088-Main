@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 // all imports here
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.CanIDs;
 import frc.robot.Constants.MotorSpeeds;
@@ -46,5 +47,14 @@ public class Hopper extends SubsystemBase {
 
   public void hopperStop() {
     hopperMotor.set(0);
+  }
+
+  public void hopperShoot() { // run hopper in until index to speed
+    double indexSpeed = SmartDashboard.getNumber("IndexSpeed", 0);
+    if (indexSpeed < -1000) { // wait for index motor to get to speed
+      hopperOut();
+    } else {
+      hopperIn();
+    }
   }
 }

@@ -6,13 +6,12 @@ import com.revrobotics.spark.FeedbackSensor;
 import com.revrobotics.spark.SparkBase;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkFlex;
-import com.revrobotics.spark.SparkLimitSwitch;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkMaxConfig;
-// all imports here
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
@@ -28,8 +27,8 @@ public class Turret extends SubsystemBase {
   // motors & variables here, define them and create any PIDs needed
 
   private SparkFlex turretPivot;
-  private SparkLimitSwitch turretForwardLimit;
-  private SparkLimitSwitch turretReverseLimitSwitch;
+  private DigitalInput forwardLimit;
+  private DigitalInput reverseLimit;
   private SparkClosedLoopController turretController;
 
   private Field2d turretField = new Field2d();
@@ -49,8 +48,8 @@ public class Turret extends SubsystemBase {
   public Turret() {
     // config motor settings here
     turretPivot = new SparkFlex(CanIDs.kTurretPivot, MotorType.kBrushless);
-    turretForwardLimit = turretPivot.getForwardLimitSwitch();
-    turretReverseLimitSwitch = turretPivot.getReverseLimitSwitch();
+    forwardLimit = new DigitalInput(CanIDs.kTurretForwardLimitDIO);
+    reverseLimit = new DigitalInput(CanIDs.kTurretReverseLimitDIO);
     turretController = turretPivot.getClosedLoopController();
     SparkMaxConfig config = new SparkMaxConfig();
 
@@ -88,16 +87,16 @@ public class Turret extends SubsystemBase {
     // This method will be called once per scheduler run
     // Put smartdashboard stuff, check for limit switches
 
-    SmartDashboard.putBoolean("Forward Limit", turretForwardLimit.isPressed());
-    SmartDashboard.putBoolean("Reverse Limit", turretReverseLimitSwitch.isPressed());
+    SmartDashboard.putBoolean("Forward Limit", forwardLimit.get());
+    SmartDashboard.putBoolean("Reverse Limit", reverseLimit.get());
     SmartDashboard.putNumber("Turret Velocity", turretPivot.getEncoder().getVelocity());
     SmartDashboard.putNumber("Turret Position", turretPivot.getEncoder().getPosition());
 
-    if (turretReverseLimitSwitch.isPressed()) {
+    if (reverseLimit.get()) {
       turretPivot.getEncoder().setPosition(0);
     }
 
-    if (turretForwardLimit.isPressed()) {
+    if (forwardLimit.get()) {
       turretPivot.getEncoder().setPosition(Constants.kTurretForwardLimit);
     }
 
@@ -121,8 +120,8 @@ public class Turret extends SubsystemBase {
     Logger.recordOutput("Turret/Velocity", turretPivot.getEncoder().getPosition(), "rpm");
     Logger.recordOutput(
         "Turret/VelocitySetpoint", turretController.getMAXMotionSetpointVelocity(), "rpm");
-    Logger.recordOutput("Turret/ForwardLimit", turretForwardLimit.isPressed());
-    Logger.recordOutput("Turret/ReverseLimit", turretReverseLimitSwitch.isPressed());
+    Logger.recordOutput("Turret/ForwardLimit", forwardLimit.get());
+    Logger.recordOutput("Turret/ReverseLimit", reverseLimit.get());
     Logger.recordOutput("Turret/Pose", turretPose);
   }
 
@@ -189,8 +188,16 @@ public class Turret extends SubsystemBase {
     SmartDashboard.putData("Turret Target", targetField);
 
     // https://docs.revrobotics.com/revlib/spark/closed-loop/maxmotion-position-control
-    turretController.setSetpoint(
-        angleToTargetRotations, SparkBase.ControlType.kMAXMotionPositionControl);
+    if (angleToTargetRotations > 0
+        && angleToTargetRotations < Constants.kTurretForwardLimit) { // Turret setpoint is in range
+      turretController.setSetpoint(
+          angleToTargetRotations, SparkBase.ControlType.kMAXMotionPositionControl);
+      SmartDashboard.putBoolean("Turret Out Of Range", false);
+      Logger.recordOutput("Turret/TurretOutOfRange", false);
+    } else {
+      SmartDashboard.putBoolean("Turret Out Of Range", true);
+      Logger.recordOutput("Turret/TurretOutOfRange", true);
+    }
 
     if (angleToTargetRotations + Constants.kTurretAllowedError
             < turretPivot.getEncoder().getPosition()
@@ -237,8 +244,14 @@ public class Turret extends SubsystemBase {
     SmartDashboard.putData("Turret Target", targetField);
 
     // https://docs.revrobotics.com/revlib/spark/closed-loop/maxmotion-position-control
-    turretController.setSetpoint(
-        angleToTargetRotations, SparkBase.ControlType.kMAXMotionPositionControl);
+    if (angleToTargetRotations > 0
+        && angleToTargetRotations < Constants.kTurretForwardLimit) { // Turret setpoint is in range
+      turretController.setSetpoint(
+          angleToTargetRotations, SparkBase.ControlType.kMAXMotionPositionControl);
+      Logger.recordOutput("Turret/TurretOutOfRange", false);
+    } else {
+      Logger.recordOutput("Turret/TurretOutOfRange", true);
+    }
 
     if (angleToTargetRotations + Constants.kTurretAllowedError
             < turretPivot.getEncoder().getPosition()
@@ -262,8 +275,48 @@ public class Turret extends SubsystemBase {
     turretPivot.set(-MotorSpeeds.kTurretSpeed);
   }
 
+  public void initLimits() {
+    SparkMaxConfig config = new SparkMaxConfig();
+    config
+        .softLimit
+        .forwardSoftLimit(Constants.kTurretForwardLimit)
+        .reverseSoftLimit(0)
+        .forwardSoftLimitEnabled(true)
+        .reverseSoftLimitEnabled(true);
+
+    // Set PID gains
+    config
+        .closedLoop
+        .p(MotorSpeeds.kTurretP)
+        .i(MotorSpeeds.kTurretI)
+        .d(MotorSpeeds.kTurretD)
+        .feedForward
+        .kS(MotorSpeeds.kTurretS)
+        .kV(MotorSpeeds.kTurretV)
+        .kA(MotorSpeeds.kTurretA);
+
+    // Set MAXMotion parameters
+    config
+        .closedLoop
+        .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
+        .maxMotion
+        .cruiseVelocity(MotorSpeeds.kTurretCruise)
+        .maxAcceleration(MotorSpeeds.kTurretAccel)
+        .allowedProfileError(MotorSpeeds.kTurretError);
+
+    turretPivot.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+  }
+
   public void turretToSetpoint(double overideSetpoint) {
     turretController.setSetpoint(overideSetpoint, SparkBase.ControlType.kMAXMotionPositionControl);
+  }
+
+  public boolean getTurretForwardLimit() {
+    return forwardLimit.get();
+  }
+
+  public boolean getTurretReverseLimit() {
+    return reverseLimit.get();
   }
 
   // Returns the current turret angle in degrees

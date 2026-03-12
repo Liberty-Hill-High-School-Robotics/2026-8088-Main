@@ -32,6 +32,6 @@ public class TurretRight extends Command {
 
   @Override
   public boolean isFinished() {
-    return false;
+    return m_turret.getTurretForwardLimit();
   }
 }

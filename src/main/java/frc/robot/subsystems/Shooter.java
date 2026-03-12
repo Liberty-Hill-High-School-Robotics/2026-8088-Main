@@ -8,11 +8,13 @@ import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkFlexConfig;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 // all imports here
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.CanIDs;
 import frc.robot.Constants.MotorSpeeds;
+import frc.robot.util.ActiveHubTracker;
 import org.littletonrobotics.junction.Logger;
 
 public class Shooter extends SubsystemBase {
@@ -22,8 +24,12 @@ public class Shooter extends SubsystemBase {
   private SparkClosedLoopController shooterController;
   private SparkFlex shooterBackMotor;
   private SparkClosedLoopController shooterBackController;
+  private ActiveHubTracker hubTracker;
+  private String shooterState;
 
   public Shooter() {
+    hubTracker = new ActiveHubTracker();
+    shooterState = "Initilized";
     // config motor settings here
     shooterMotor = new SparkFlex(CanIDs.kShooterMotor, MotorType.kBrushless);
     shooterController = shooterMotor.getClosedLoopController();
@@ -72,6 +78,16 @@ public class Shooter extends SubsystemBase {
     Logger.recordOutput(
         "Shooter/ShooterBack/ShooterSetpoint", shooterBackController.getSetpoint(), "rpm");
 
+    Logger.recordOutput("GameTime", DriverStation.getMatchTime());
+
+    if (hubTracker.isHubActive()) {
+      Logger.recordOutput("Shooter/HubActive", "Hub Active");
+    } else {
+      Logger.recordOutput("Shooter/HubActive", "Hub Not Active");
+    }
+
+    Logger.recordOutput("Shooter/Requested", shooterState);
+
     SmartDashboard.putNumber("Shooter Actual", shooterMotor.getEncoder().getVelocity());
     SmartDashboard.putNumber("Shooter Back Actual", shooterBackMotor.getEncoder().getVelocity());
   }
@@ -89,8 +105,7 @@ public class Shooter extends SubsystemBase {
   // as well as check for limits and reset encoders,
   // return true/false if limit is true, or encoder >= x value
 
-  public void shootAtSpeed() {
-    double distance = SmartDashboard.getNumber("Turret Distance to Target", 0);
+  public void shootAtSpeed(double distance) {
     double setpoint = 179.836 + (595.497 * distance) + (264.868 * Math.pow(distance, 2));
     double shooterBackingRatio =
         4.5667
@@ -101,10 +116,16 @@ public class Shooter extends SubsystemBase {
     SmartDashboard.putNumber("Shooter Setpoint", setpoint);
     shooterController.setSetpoint(setpoint, ControlType.kVelocity);
     shooterBackController.setSetpoint(backSetpoint, ControlType.kVelocity);
+    shooterState = "Shooting in Active Hub";
+    shooterState = "Not Shooting in Inactive Hub";
+    shooterController.setSetpoint(setpoint, ControlType.kVelocity);
+    shooterBackController.setSetpoint(backSetpoint, ControlType.kVelocity);
+    shooterState = "Shooting without hub tracking";
   }
 
   public void shooterStop() {
     shooterMotor.set(0);
     shooterBackMotor.set(0);
+    shooterState = "Not Shooting";
   }
 }

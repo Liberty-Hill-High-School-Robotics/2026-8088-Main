@@ -20,7 +20,7 @@ public class DetectAndIntake extends ParallelCommandGroup {
         new BallToHopper(m_intake, m_hopper),
         DriveCommands.joystickDriveRobot(
             m_drive,
-            () -> 0.5,
+            () -> 0.7,
             () -> 0.0,
             () -> -targetPID.calculate(0, SmartDashboard.getNumber("objYaw", 0))));
     targetPID.close();

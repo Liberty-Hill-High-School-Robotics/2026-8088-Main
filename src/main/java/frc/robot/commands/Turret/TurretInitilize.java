@@ -8,12 +8,14 @@ import frc.robot.subsystems.Turret;
  * pedagogical purposes. Actual code should inline a command this simple with {@link
  * edu.wpi.first.wpilibj2.command.InstantCommand}.
  */
-public class TurretLeft extends Command {
+public class TurretInitilize extends Command {
   // The subsystem the command runs on
   private final Turret m_turret;
+  private boolean goRight;
 
-  public TurretLeft(Turret subsystem) {
+  public TurretInitilize(Turret subsystem, boolean goRight) {
     m_turret = subsystem;
+    this.goRight = goRight;
     addRequirements(m_turret);
   }
 
@@ -22,16 +24,21 @@ public class TurretLeft extends Command {
 
   @Override
   public void execute() {
-    m_turret.turretLeft();
+    if (goRight) {
+      m_turret.turretRight();
+    } else {
+      m_turret.turretLeft();
+    }
   }
 
   @Override
   public void end(boolean interrupted) {
+    m_turret.initLimits();
     m_turret.turretStop();
   }
 
   @Override
   public boolean isFinished() {
-    return m_turret.getTurretReverseLimit();
+    return m_turret.getTurretReverseLimit() || m_turret.getTurretForwardLimit();
   }
 }

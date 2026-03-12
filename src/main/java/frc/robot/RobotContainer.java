@@ -13,6 +13,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
@@ -27,13 +28,9 @@ import frc.robot.commands.DriveCommands;
 import frc.robot.commands.Intake.IntakeIn;
 import frc.robot.commands.ShootInHub;
 import frc.robot.commands.Shooter.ShootAtSpeed;
-import frc.robot.commands.Turret.TurretLeft;
-import frc.robot.commands.Turret.TurretRight;
-import frc.robot.commands.Turret.TurretToSetpoint;
 import frc.robot.subsystems.Hopper;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
-import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.Vision;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
@@ -53,7 +50,7 @@ public class RobotContainer {
   // Subsystems
   private final Drive m_drive;
   private final Vision m_vision;
-  private final Turret m_turret;
+  // private final Turret m_turret;
   private final Hopper m_hopper;
   private final Intake m_intake;
   private final Shooter m_shooter;
@@ -82,7 +79,7 @@ public class RobotContainer {
                 new ModuleIOSpark(2),
                 new ModuleIOSpark(3));
         m_vision = new Vision(m_drive::addVisionMeasurement);
-        m_turret = new Turret();
+        // m_turret = new Turret();
         m_hopper = new Hopper();
         m_intake = new Intake();
         m_shooter = new Shooter();
@@ -98,7 +95,7 @@ public class RobotContainer {
                 new ModuleIOSim(),
                 new ModuleIOSim());
         m_vision = new Vision(m_drive::addVisionMeasurement);
-        m_turret = new Turret();
+        // m_turret = new Turret();
         m_hopper = new Hopper();
         m_intake = new Intake();
         m_shooter = new Shooter();
@@ -114,20 +111,22 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {});
         m_vision = new Vision(m_drive::addVisionMeasurement);
-        m_turret = new Turret();
+        // m_turret = new Turret();
         m_hopper = new Hopper();
         m_intake = new Intake();
         m_shooter = new Shooter();
         break;
     }
 
-    // Set up auto routines
-    autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
-
     // Named Comands for PathPlanner autos
     NamedCommands.registerCommand("IntakeIn", new IntakeIn(m_intake));
     NamedCommands.registerCommand(
-        "ShootInHub", new ShootInHub(m_intake, m_turret, m_shooter, m_hopper));
+        "ShootInHub", new ShootInHub(m_intake, m_shooter, m_hopper, false));
+    // NamedCommands.registerCommand("InitilizeTurretLeft", new TurretInitilize(m_turret, false));
+    // NamedCommands.registerCommand("InitilizeTurretRight", new TurretInitilize(m_turret, true));
+
+    // Set up auto routines
+    autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
     // Set up SysId routines
     autoChooser.addOption(
@@ -192,32 +191,83 @@ public class RobotContainer {
     JoystickDriveAtZero.whileTrue(
         DriveCommands.joystickDriveAtAngle(
             m_drive,
-            () -> -m_driverController.getRawAxis(0),
             () -> -m_driverController.getRawAxis(1),
+            () -> -m_driverController.getRawAxis(0),
             () -> Rotation2d.kZero));
 
-    // Lock to 45° when left bumper is held, for use when crossing the trench
-    final Trigger DriveCrossTrench = m_driverController.button(5);
+    // Lock to 45° when left trigger is held, for use when crossing the trench
+    final Trigger DriveCrossTrench = m_driverController.axisGreaterThan(2, .1);
     DriveCrossTrench.whileTrue(
         DriveCommands.joystickDriveAtAngle(
             m_drive,
-            () -> -m_driverController.getRawAxis(0),
             () -> -m_driverController.getRawAxis(1),
+            () -> -m_driverController.getRawAxis(0),
             () -> Rotation2d.fromDegrees(45)));
 
-    // Automatic Intake when Right bumper is held
-    final Trigger AutoIntake = m_driverController.button(6);
+    // Automatic Intake when Right trigger is held
+    final Trigger AutoIntake = m_driverController.axisGreaterThan(3, .1);
     AutoIntake.whileTrue(new DetectAndIntake(m_drive, m_intake, m_hopper));
 
     // Setup for Operator
 
-    // Shoots balls into hub when right bumper is pressed
-    final Trigger ShootInHub = m_operatorController.button(6);
-    ShootInHub.toggleOnTrue(new ShootInHub(m_intake, m_turret, m_shooter, m_hopper));
+    /*
+    // Shoots balls into hub when right trigger is pressed, considers hub state, slow down drive
+    final Trigger ShootInHub = m_operatorController.axisGreaterThan(3, .1);
+    ShootInHub.whileTrue(new ShootInHub(m_intake, m_turret, m_shooter, m_hopper, true));
+    ShootInHub.whileTrue(DriveCommands.joystickDrive(
+        m_drive,
+        () -> -m_driverController.getRawAxis(1) * Constants.kDriveShootingRatio,
+        () -> -m_driverController.getRawAxis(0) * Constants.kDriveShootingRatio,
+        () -> m_driverController.getRawAxis(4) * Constants.kDriveShootingRatio));
 
-    // Shoots balls into Aliance Zone when Left Bumper is pressed
-    final Trigger AirMail = m_operatorController.button(5);
-    AirMail.toggleOnTrue(new AirMail(m_intake, m_turret, m_shooter, m_hopper));
+    // Shoots balls into hub when right bumper is pressed, does not consider hub state, slow down drive
+    final Trigger ShootInHubDumb = m_operatorController.button(6);
+    ShootInHubDumb.whileTrue(new ShootInHub(m_intake, m_turret, m_shooter, m_hopper, false));
+    ShootInHubDumb.whileTrue(DriveCommands.joystickDrive(
+        m_drive,
+        () -> -m_driverController.getRawAxis(1) * Constants.kDriveShootingRatio,
+        () -> -m_driverController.getRawAxis(0) * Constants.kDriveShootingRatio,
+        () -> m_driverController.getRawAxis(4) * Constants.kDriveShootingRatio));
+
+    // Shoots balls into Aliance Zone when Left trigger is pressed, does not consider hub state, slow down drive
+    final Trigger AirMail = m_operatorController.axisGreaterThan(2, .1);
+    AirMail.whileTrue(new AirMail(m_intake, m_turret, m_shooter, m_hopper));
+    AirMail.whileTrue(DriveCommands.joystickDrive(
+        m_drive,
+        () -> -m_driverController.getRawAxis(1) * Constants.kDriveShootingRatio,
+        () -> -m_driverController.getRawAxis(0) * Constants.kDriveShootingRatio,
+        () -> m_driverController.getRawAxis(4) * Constants.kDriveShootingRatio));
+    */
+
+    final Trigger ShootInHub = m_operatorController.axisGreaterThan(3, .1);
+    ShootInHub.whileTrue(new ShootInHub(m_intake, m_shooter, m_hopper, true));
+    ShootInHub.whileTrue(
+        DriveCommands.joystickDriveAtAngle(
+            m_drive,
+            () -> -m_driverController.getRawAxis(1) * Constants.kDriveShootingRatio,
+            () -> -m_driverController.getRawAxis(0) * Constants.kDriveShootingRatio,
+            () ->
+                Rotation2d.fromDegrees(SmartDashboard.getNumber("Robot Angle to Target Hub", 0))));
+
+    final Trigger ShootInHubDumb = m_operatorController.button(6);
+    ShootInHubDumb.whileTrue(new ShootInHub(m_intake, m_shooter, m_hopper, false));
+    ShootInHubDumb.whileTrue(
+        DriveCommands.joystickDriveAtAngle(
+            m_drive,
+            () -> -m_driverController.getRawAxis(1) * Constants.kDriveShootingRatio,
+            () -> -m_driverController.getRawAxis(0) * Constants.kDriveShootingRatio,
+            () ->
+                Rotation2d.fromDegrees(SmartDashboard.getNumber("Robot Angle to Target Hub", 0))));
+
+    final Trigger AirMail = m_operatorController.axisGreaterThan(2, .1);
+    AirMail.whileTrue(new AirMail(m_intake, m_shooter, m_hopper));
+    AirMail.whileTrue(
+        DriveCommands.joystickDriveAtAngle(
+            m_drive,
+            () -> -m_driverController.getRawAxis(1) * Constants.kDriveShootingRatio,
+            () -> -m_driverController.getRawAxis(0) * Constants.kDriveShootingRatio,
+            () ->
+                Rotation2d.fromDegrees(SmartDashboard.getNumber("Robot Angle to Target Mail", 0))));
 
     // Ejects balls out of the robot while Y button is held
     final Trigger Eject = m_operatorController.button(4);
@@ -227,6 +277,7 @@ public class RobotContainer {
     final Trigger IntakeInOverride = m_operatorController.button(3);
     IntakeInOverride.toggleOnTrue(new BallToHopper(m_intake, m_hopper));
 
+    /*
     // Override to move turret left while left on the D-pad is held
     final Trigger TurretLeftOverride = m_operatorController.povLeft();
     TurretLeftOverride.whileTrue(new TurretLeft(m_turret));
@@ -239,11 +290,17 @@ public class RobotContainer {
     final Trigger TurretCenterOverride = m_operatorController.button(2);
     TurretCenterOverride.toggleOnTrue(
         new TurretToSetpoint(m_turret, Constants.kTurretForwardLimit / 2));
+        */
 
     // Override to shoot at a set Speed when A button is pressed
     final Trigger ShootAtFallbackSpeed = m_operatorController.button(1);
     ShootAtFallbackSpeed.toggleOnTrue(
-        new ShootAtSpeed(m_shooter)); // find a consistant distance to fall back on
+        new ShootAtSpeed(m_shooter, 2)); // find a consistant distance to fall back on
+
+    /*
+    final Trigger ReInitilizeTurret = m_operatorController.button(8);
+    ReInitilizeTurret.toggleOnTrue(new TurretInitilize(m_turret, false));
+    */
   }
 
   /**

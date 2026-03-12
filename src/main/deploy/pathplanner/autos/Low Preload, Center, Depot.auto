@@ -5,6 +5,12 @@
     "data": {
       "commands": [
         {
+          "type": "named",
+          "data": {
+            "name": "InitilizeTurretLeft"
+          }
+        },
+        {
           "type": "deadline",
           "data": {
             "commands": [
@@ -36,7 +42,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Low Start to Center"
+                  "pathName": "Low Start to Shoot"
                 }
               }
             ]

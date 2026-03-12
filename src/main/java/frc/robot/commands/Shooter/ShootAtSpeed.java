@@ -11,9 +11,11 @@ import frc.robot.subsystems.Shooter;
 public class ShootAtSpeed extends Command {
   // The subsystem the command runs on
   private final Shooter m_shooter;
+  private double distance;
 
-  public ShootAtSpeed(Shooter subsystem) {
+  public ShootAtSpeed(Shooter subsystem, double distance) {
     m_shooter = subsystem;
+    this.distance = distance;
     addRequirements(m_shooter);
   }
 
@@ -22,7 +24,7 @@ public class ShootAtSpeed extends Command {
 
   @Override
   public void execute() {
-    m_shooter.shootAtSpeed();
+    m_shooter.shootAtSpeed(distance);
   }
 
   @Override
