@@ -27,10 +27,12 @@ import frc.robot.commands.DetectAndIntake;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.Intake.IntakeIn;
 import frc.robot.commands.ShootInHub;
+import frc.robot.commands.Shooter.ChangeOperatorFudge;
 import frc.robot.commands.Shooter.ShootAtSpeed;
 import frc.robot.subsystems.Hopper;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.Vision;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
@@ -50,7 +52,7 @@ public class RobotContainer {
   // Subsystems
   private final Drive m_drive;
   private final Vision m_vision;
-  // private final Turret m_turret;
+  private final Turret m_turret;
   private final Hopper m_hopper;
   private final Intake m_intake;
   private final Shooter m_shooter;
@@ -79,7 +81,7 @@ public class RobotContainer {
                 new ModuleIOSpark(2),
                 new ModuleIOSpark(3));
         m_vision = new Vision(m_drive::addVisionMeasurement);
-        // m_turret = new Turret();
+        m_turret = new Turret();
         m_hopper = new Hopper();
         m_intake = new Intake();
         m_shooter = new Shooter();
@@ -95,7 +97,7 @@ public class RobotContainer {
                 new ModuleIOSim(),
                 new ModuleIOSim());
         m_vision = new Vision(m_drive::addVisionMeasurement);
-        // m_turret = new Turret();
+        m_turret = new Turret();
         m_hopper = new Hopper();
         m_intake = new Intake();
         m_shooter = new Shooter();
@@ -111,10 +113,10 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {});
         m_vision = new Vision(m_drive::addVisionMeasurement);
-        // m_turret = new Turret();
         m_hopper = new Hopper();
         m_intake = new Intake();
         m_shooter = new Shooter();
+        m_turret = new Turret();
         break;
     }
 
@@ -275,7 +277,7 @@ public class RobotContainer {
 
     // Override to run the intake without obj detection when X button is pressed
     final Trigger IntakeInOverride = m_operatorController.button(3);
-    IntakeInOverride.toggleOnTrue(new BallToHopper(m_intake, m_hopper));
+    IntakeInOverride.whileTrue(new BallToHopper(m_intake, m_hopper));
 
     /*
     // Override to move turret left while left on the D-pad is held
@@ -293,6 +295,7 @@ public class RobotContainer {
         */
 
     // Override to shoot at a set Speed when A button is pressed
+
     final Trigger ShootAtFallbackSpeed = m_operatorController.button(1);
     ShootAtFallbackSpeed.toggleOnTrue(
         new ShootAtSpeed(m_shooter, 2)); // find a consistant distance to fall back on
@@ -301,6 +304,12 @@ public class RobotContainer {
     final Trigger ReInitilizeTurret = m_operatorController.button(8);
     ReInitilizeTurret.toggleOnTrue(new TurretInitilize(m_turret, false));
     */
+
+    final Trigger DecreaseOperatorFudge = m_operatorController.povDown();
+    DecreaseOperatorFudge.whileTrue(new ChangeOperatorFudge(m_shooter, -10));
+
+    final Trigger IncreaseOperatorFudge = m_operatorController.povUp();
+    IncreaseOperatorFudge.whileTrue(new ChangeOperatorFudge(m_shooter, 10));
   }
 
   /**

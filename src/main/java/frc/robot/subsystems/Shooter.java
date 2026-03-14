@@ -27,9 +27,12 @@ public class Shooter extends SubsystemBase {
   private ActiveHubTracker hubTracker;
   private String shooterState;
 
+  private double shooterOperatorFudge;
+
   public Shooter() {
     hubTracker = new ActiveHubTracker();
     shooterState = "Initilized";
+    shooterOperatorFudge = -30.163;
     // config motor settings here
     shooterMotor = new SparkFlex(CanIDs.kShooterMotor, MotorType.kBrushless);
     shooterController = shooterMotor.getClosedLoopController();
@@ -90,6 +93,8 @@ public class Shooter extends SubsystemBase {
 
     SmartDashboard.putNumber("Shooter Actual", shooterMotor.getEncoder().getVelocity());
     SmartDashboard.putNumber("Shooter Back Actual", shooterBackMotor.getEncoder().getVelocity());
+
+    Logger.recordOutput("operatorFudge", shooterOperatorFudge);
   }
 
   @Override
@@ -106,7 +111,8 @@ public class Shooter extends SubsystemBase {
   // return true/false if limit is true, or encoder >= x value
 
   public void shootAtSpeed(double distance) {
-    double setpoint = 179.836 + (595.497 * distance) + (264.868 * Math.pow(distance, 2));
+    double setpoint =
+        shooterOperatorFudge + (595.497 * distance) + (264.868 * Math.pow(distance, 2));
     double shooterBackingRatio =
         4.5667
             - (2.51262 * distance)
@@ -116,16 +122,16 @@ public class Shooter extends SubsystemBase {
     SmartDashboard.putNumber("Shooter Setpoint", setpoint);
     shooterController.setSetpoint(setpoint, ControlType.kVelocity);
     shooterBackController.setSetpoint(backSetpoint, ControlType.kVelocity);
-    shooterState = "Shooting in Active Hub";
-    shooterState = "Not Shooting in Inactive Hub";
-    shooterController.setSetpoint(setpoint, ControlType.kVelocity);
-    shooterBackController.setSetpoint(backSetpoint, ControlType.kVelocity);
-    shooterState = "Shooting without hub tracking";
+    shooterState = "Shooting";
   }
 
   public void shooterStop() {
     shooterMotor.set(0);
     shooterBackMotor.set(0);
     shooterState = "Not Shooting";
+  }
+
+  public void changeOperatorFudge(double amount) {
+    shooterOperatorFudge += amount;
   }
 }

@@ -39,7 +39,7 @@ public final class Constants {
   public static final double kTurretXOffset = Units.inchesToMeters(3.78230505);
   public static final double kTurretYOffset = Units.inchesToMeters(0);
 
-  public static final double kDriveShootingRatio = 0.5;
+  public static final double kDriveShootingRatio = 0.35;
 
   public static final double kTurretMaxAngle =
       270.0; // TODO: get a real number from physical turret
@@ -84,6 +84,7 @@ public final class Constants {
     // Intake
     public static final int kIntakeMotor = 11;
     public static final int kIndexMotor = 10;
+    public static final int kIndexMotor2 = 18;
 
     // Turret
     public static final int kTurretPivot = 12;

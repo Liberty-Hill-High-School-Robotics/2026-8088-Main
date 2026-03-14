@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Top Start to Shoot"
+            "pathName": "Low Start to Shoot"
           }
         },
         {
@@ -36,7 +36,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Top Shoot to Center"
+                  "pathName": "Low Shoot to Center"
                 }
               },
               {
@@ -51,7 +51,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Top Center to Shoot"
+            "pathName": "Low Center to Shoot"
           }
         },
         {
@@ -64,6 +64,6 @@
     }
   },
   "resetOdom": true,
-  "folder": "2",
+  "folder": "3",
   "choreoAuto": false
 }

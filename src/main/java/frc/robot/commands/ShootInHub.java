@@ -32,7 +32,7 @@ public class ShootInHub extends ParallelCommandGroup {
               new ShootAtSpeed(m_shooter, distance)); // keep shooting
         } else { // hub is not active
           addCommands(
-              new BallToShoot(m_intake, m_hopper), // store balls until active
+              new BallToHopper(m_intake, m_hopper), // store balls until active
               // new TurretPointAtHub(m_turret), // keep turret aligned
               new ShootAtSpeed(m_shooter, distance)); // spin up shooter
         }

@@ -15,11 +15,13 @@ public class Intake extends SubsystemBase {
   private SparkFlex intakeMotor;
 
   private SparkFlex indexMotor;
+  private SparkFlex indexMotor2;
 
   public Intake() {
     // config motor settings here
     intakeMotor = new SparkFlex(CanIDs.kIntakeMotor, MotorType.kBrushless);
     indexMotor = new SparkFlex(CanIDs.kIndexMotor, MotorType.kBrushless);
+    indexMotor2 = new SparkFlex(CanIDs.kIndexMotor2, MotorType.kBrushless);
   }
 
   @Override
@@ -45,22 +47,26 @@ public class Intake extends SubsystemBase {
   // return true/false if limit is true, or encoder >= x value
 
   public void intakeIn() {
-    intakeMotor.set(MotorSpeeds.kIntakeSpeed);
+    intakeMotor.set(MotorSpeeds.kIntakeSpeed * 1.5);
     indexMotor.set(MotorSpeeds.kIntakeSpeed);
+    indexMotor2.set(MotorSpeeds.kIntakeSpeed);
   }
 
   public void intakeUp() {
-    intakeMotor.set(MotorSpeeds.kIntakeSpeed);
+    intakeMotor.set(MotorSpeeds.kIntakeSpeed * 1.5);
     indexMotor.set(-MotorSpeeds.kIntakeSpeed);
+    indexMotor2.set(-MotorSpeeds.kIntakeSpeed);
   }
 
   public void intakeOut() {
-    intakeMotor.set(-MotorSpeeds.kIntakeSpeed);
+    intakeMotor.set(-MotorSpeeds.kIntakeSpeed * 1.5);
     indexMotor.set(-MotorSpeeds.kIntakeSpeed);
+    indexMotor2.set(-MotorSpeeds.kIntakeSpeed);
   }
 
   public void intakeStop() {
     intakeMotor.set(0);
     indexMotor.set(0);
+    indexMotor2.set(0);
   }
 }

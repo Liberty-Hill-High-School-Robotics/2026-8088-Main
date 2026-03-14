@@ -51,7 +51,15 @@ public class Hopper extends SubsystemBase {
 
   public void hopperShoot() { // run hopper in until index to speed
     double indexSpeed = SmartDashboard.getNumber("IndexSpeed", 0);
-    if (indexSpeed < -1000) { // wait for index motor to get to speed
+    if (indexSpeed < -1700) { // wait for index motor to get to speed
+      hopperOut();
+    } else {
+      hopperIn();
+    }
+  }
+
+  public void autoHopper() {
+    if (hopperMotor.getEncoder().getVelocity() > 4000) {
       hopperOut();
     } else {
       hopperIn();
